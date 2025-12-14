@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from SolixBLE import SolixBLEDevice
+from SolixBLE import SolixBLEDevice, C300, C1000, Generic
 
 from homeassistant.components.sensor import SensorEntity, SensorStateClass
 from homeassistant.components.sensor.const import SensorDeviceClass
@@ -31,146 +31,204 @@ async def async_setup_entry(
     """Set up the Sensors."""
 
     device = config_entry.runtime_data
+    sensors = []
 
-    sensors = [
-        SolixSensorEntity(
-            device, "AC Timer", None, "ac_timer", SensorDeviceClass.TIMESTAMP
+    # Common sensors
+    if any(x in device.name for x in ["C300X", "C1000"]):
+        sensors.append(
+            SolixSensorEntity(
+                device, "AC Timer", None, "ac_timer", SensorDeviceClass.TIMESTAMP
+            )
+        )
+        sensors.append(
+            SolixSensorEntity(device, "Remaining Hours", "hours", "hours_remaining"),
+        )
+        sensors.append(
+            SolixSensorEntity(device, "Remaining Days", "days", "days_remaining"),
+        )
+        sensors.append(
+            SolixSensorEntity(device, "Remaining Time", "hours", "time_remaining"),
+        )
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "Timestamp Remaining",
+                None,
+                "timestamp_remaining",
+                SensorDeviceClass.TIMESTAMP,
+            )
         ),
-        SolixSensorEntity(
-            device, "DC Timer", None, "dc_timer", SensorDeviceClass.TIMESTAMP
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "AC Power In",
+                "W",
+                "ac_power_in",
+                SensorDeviceClass.POWER,
+            )
         ),
-        SolixSensorEntity(device, "Remaining Hours", "hours", "hours_remaining"),
-        SolixSensorEntity(device, "Remaining Days", "days", "days_remaining"),
-        SolixSensorEntity(device, "Remaining Time", "hours", "time_remaining"),
-        SolixSensorEntity(
-            device,
-            "Timestamp Remaining",
-            None,
-            "timestamp_remaining",
-            SensorDeviceClass.TIMESTAMP,
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "AC Power Out",
+                "W",
+                "ac_power_out",
+                SensorDeviceClass.POWER,
+            )
         ),
-        SolixSensorEntity(
-            device,
-            "AC Power In",
-            "W",
-            "ac_power_in",
-            SensorDeviceClass.POWER,
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "USB C1 Power",
+                "W",
+                "usb_c1_power",
+                SensorDeviceClass.POWER,
+            )
         ),
-        SolixSensorEntity(
-            device,
-            "AC Power Out",
-            "W",
-            "ac_power_out",
-            SensorDeviceClass.POWER,
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "USB C2 Power",
+                "W",
+                "usb_c2_power",
+                SensorDeviceClass.POWER,
+            )
         ),
-        SolixSensorEntity(
-            device,
-            "USB C1 Power",
-            "W",
-            "usb_c1_power",
-            SensorDeviceClass.POWER,
+        sensors.append(
+            SolixSensorEntity(
+                device, "USB A1 Power", "W", "usb_a1_power", SensorDeviceClass.POWER
+            )
+        )
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "Solar Power In",
+                "W",
+                "solar_power_in",
+                SensorDeviceClass.POWER,
+            )
+        )
+        sensors.append(
+            SolixSensorEntity(
+                device, "Total Power In", "W", "power_in", SensorDeviceClass.POWER
+            )
         ),
-        SolixSensorEntity(
-            device,
-            "USB C2 Power",
-            "W",
-            "usb_c2_power",
-            SensorDeviceClass.POWER,
+        sensors.append(
+            SolixSensorEntity(
+                device, "Total Power Out", "W", "power_out", SensorDeviceClass.POWER
+            )
         ),
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "Battery Percentage",
+                "%",
+                "battery_percentage",
+                SensorDeviceClass.BATTERY,
+            )
+        )
+
+    # C300X only sensors
+    if any(x in device.name for x in ["C300X"]):
+        sensors.append(
+            SolixSensorEntity(
+                device, "DC Timer", None, "dc_timer", SensorDeviceClass.TIMESTAMP
+            )
+        )
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "USB C3 Power",
+                "W",
+                "usb_c3_power",
+                SensorDeviceClass.POWER,
+            )
+        )
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "DC Power Out",
+                "W",
+                "dc_power_out",
+                SensorDeviceClass.POWER,
+            )
+        )
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "Status Solar",
+                None,
+                "solar_port",
+                SensorDeviceClass.ENUM,
+                PORT_STATUS_STRINGS,
+            )
+        )
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "Status USB C1",
+                None,
+                "usb_port_c1",
+                SensorDeviceClass.ENUM,
+                PORT_STATUS_STRINGS,
+            )
+        )
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "Status USB C2",
+                None,
+                "usb_port_c2",
+                SensorDeviceClass.ENUM,
+                PORT_STATUS_STRINGS,
+            )
+        )
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "Status USB C3",
+                None,
+                "usb_port_c3",
+                SensorDeviceClass.ENUM,
+                PORT_STATUS_STRINGS,
+            )
+        )
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "Status USB A1",
+                None,
+                "usb_port_a1",
+                SensorDeviceClass.ENUM,
+                PORT_STATUS_STRINGS,
+            )
+        )
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "Status DC Out",
+                None,
+                "dc_port",
+                SensorDeviceClass.ENUM,
+                PORT_STATUS_STRINGS,
+            )
+        )
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "Status Light",
+                None,
+                "light",
+                SensorDeviceClass.ENUM,
+                LIGHT_STATUS_STRINGS,
+            )
+        )
+
+    # C1000 only sensors
+    if any(x in device.name for x in ["C1000"]):
         SolixSensorEntity(
-            device,
-            "USB C3 Power",
-            "W",
-            "usb_c3_power",
-            SensorDeviceClass.POWER,
+            device, "USB A2 Power", "W", "usb_a2_power", SensorDeviceClass.POWER
         ),
-        SolixSensorEntity(
-            device, "USB A1 Power", "W", "usb_a1_power", SensorDeviceClass.POWER
-        ),
-        SolixSensorEntity(
-            device,
-            "DC Power Out",
-            "W",
-            "dc_power_out",
-            SensorDeviceClass.POWER,
-        ),
-        SolixSensorEntity(
-            device,
-            "Solar Power In",
-            "W",
-            "solar_power_in",
-            SensorDeviceClass.POWER,
-        ),
-        SolixSensorEntity(
-            device, "Total Power In", "W", "power_in", SensorDeviceClass.POWER
-        ),
-        SolixSensorEntity(
-            device, "Total Power Out", "W", "power_out", SensorDeviceClass.POWER
-        ),
-        SolixSensorEntity(
-            device,
-            "Status Solar",
-            None,
-            "solar_port",
-            SensorDeviceClass.ENUM,
-            PORT_STATUS_STRINGS,
-        ),
-        SolixSensorEntity(
-            device,
-            "Battery Percentage",
-            "%",
-            "battery_percentage",
-            SensorDeviceClass.BATTERY,
-        ),
-        SolixSensorEntity(
-            device,
-            "Status USB C1",
-            None,
-            "usb_port_c1",
-            SensorDeviceClass.ENUM,
-            PORT_STATUS_STRINGS,
-        ),
-        SolixSensorEntity(
-            device,
-            "Status USB C2",
-            None,
-            "usb_port_c2",
-            SensorDeviceClass.ENUM,
-            PORT_STATUS_STRINGS,
-        ),
-        SolixSensorEntity(
-            device,
-            "Status USB C3",
-            None,
-            "usb_port_c3",
-            SensorDeviceClass.ENUM,
-            PORT_STATUS_STRINGS,
-        ),
-        SolixSensorEntity(
-            device,
-            "Status USB A1",
-            None,
-            "usb_port_a1",
-            SensorDeviceClass.ENUM,
-            PORT_STATUS_STRINGS,
-        ),
-        SolixSensorEntity(
-            device,
-            "Status DC Out",
-            None,
-            "dc_port",
-            SensorDeviceClass.ENUM,
-            PORT_STATUS_STRINGS,
-        ),
-        SolixSensorEntity(
-            device,
-            "Status Light",
-            None,
-            "light",
-            SensorDeviceClass.ENUM,
-            LIGHT_STATUS_STRINGS,
-        ),
-    ]
 
     async_add_entities(sensors)
 

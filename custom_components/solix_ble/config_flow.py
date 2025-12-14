@@ -44,6 +44,7 @@ async def validate_input(hass: HomeAssistant, address: str) -> None:
         raise NotFound
 
     try:
+        device = None
         if ble_device.name == "Anker SOLIX C300X":
             device = C300(ble_device)
         elif ble_device.name == "Anker SOLIX C1000":
