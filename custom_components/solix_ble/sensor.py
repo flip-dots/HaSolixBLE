@@ -202,7 +202,9 @@ class SolixSensorEntity(SensorEntity):
         self._attr_device_class = device_class
         self._attr_options = enum_options
         self._attr_state_class = (
-            SensorStateClass.MEASUREMENT if not enum_options else None
+            SensorStateClass.MEASUREMENT
+            if not enum_options and device_class is not SensorDeviceClass.TIMESTAMP
+            else None
         )
         self._attr_device_info = DeviceInfo(
             name=device.name,
