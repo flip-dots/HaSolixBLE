@@ -16,5 +16,5 @@
     "issue_tracker": "https://github.com/flip-dots/HaSolixBLE/issues",
     "requirements": ["SolixBLE==2.1.0"],
     "loggers": ["bleak", "SolixBLE"],
-    "version": "2.0.1"
+    "version": "2.0.2"
 }
