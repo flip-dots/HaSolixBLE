@@ -36,6 +36,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: SolixBLEConfigEntry) -> 
             )
         raise ConfigEntryNotReady("The device was not found.")
 
+    if ble_device.name is None:
+        raise ConfigEntryNotReady(
+            "The device was found but its name is unknown. Waiting until name is discovered..."
+        )
+
     device = SolixBLEDevice(ble_device)
 
     if not await device.connect():
