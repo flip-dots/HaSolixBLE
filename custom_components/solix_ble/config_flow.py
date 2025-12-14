@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from SolixBLE import SolixBLEDevice
+from SolixBLE import Generic, C300, C1000
 import voluptuous as vol
 
 from homeassistant.components import bluetooth
@@ -37,8 +37,24 @@ async def validate_input(hass: HomeAssistant, address: str) -> None:
             raise ScannerNotAvailable
         raise NotFound
 
+    if ble_device.name is None:
+        _LOGGER.warning(
+            f"The device '{ble_device.address}' was found but its name is not present in the advertisement data. Try again later..."
+        )
+        raise NotFound
+
     try:
-        device = SolixBLEDevice(ble_device)
+        if ble_device.name == "Anker SOLIX C300X":
+            device = C300(ble_device)
+        elif ble_device.name == "Anker SOLIX C1000":
+            device = C1000(ble_device)
+        else:
+            _LOGGER.warning(
+                f"The device '{ble_device.name}' is not supported and values will not be available to Home Assistant! "
+                f"However when the integration is in debug mode the raw telemetry data and differences between status "
+                f"updates will be printed in the log and this can be used to aid in adding support for new devices."
+            )
+            device = Generic(ble_device)
 
         if not await device.connect():
             raise CannotConnect
