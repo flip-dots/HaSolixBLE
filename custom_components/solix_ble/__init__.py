@@ -2,7 +2,7 @@
 
 import logging
 
-from SolixBLE import SolixBLEDevice
+from SolixBLE import SolixBLEDevice, Generic, C300, C1000
 
 from homeassistant.components.bluetooth import (
     async_ble_device_from_address,
@@ -36,7 +36,17 @@ async def async_setup_entry(hass: HomeAssistant, entry: SolixBLEConfigEntry) -> 
             )
         raise ConfigEntryNotReady("The device was not found.")
 
-    device = SolixBLEDevice(ble_device)
+    if ble_device.name == "Anker SOLIX C300X":
+        device = C300(ble_device)
+    elif ble_device.name == "Anker SOLIX C1000":
+        device = C1000(ble_device)
+    else:
+        _LOGGER.warning(
+            f"The device '{ble_device.name}' is not supported and values will not be available to Home Assistant! "
+            f"However when the integration is in debug mode the raw telemetry data and differences between status "
+            f"updates will be printed in the log and this can be used to aid in adding support for new devices."
+        )
+        device = Generic(ble_device)
 
     if not await device.connect():
         raise ConfigEntryNotReady("Device found but unable to connect.")
