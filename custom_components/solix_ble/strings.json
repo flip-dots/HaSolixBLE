@@ -2,7 +2,7 @@
     "config": {
       "step": {
         "confirm": {
-          "description": "Do you want to set up {name} ({mac})?"
+          "description": "Do you want to set up {name} ({mac})? Make sure it is in pairing mode!"
         }
       },
       "error": {
