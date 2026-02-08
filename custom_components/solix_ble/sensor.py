@@ -33,8 +33,15 @@ async def async_setup_entry(
     device = config_entry.runtime_data
     sensors = []
 
+    if type(device) is Generic:
+        _LOGGER.warning(
+            f"The device '{device.name}' is not supported and values will not be available to Home Assistant! "
+            f"However when the integration is in debug mode the raw telemetry data and differences between status "
+            f"updates will be printed in the log and this can be used to aid in adding support for new devices."
+        )
+
     # Common sensors
-    if any(x in device.name for x in ["C300X", "C1000"]):
+    if any(x in device.name for x in ["C300", "C1000"]):
         sensors.append(
             SolixSensorEntity(
                 device, "AC Timer", None, "ac_timer", SensorDeviceClass.TIMESTAMP
@@ -128,8 +135,8 @@ async def async_setup_entry(
             )
         )
 
-    # C300X only sensors
-    if any(x in device.name for x in ["C300X"]):
+    # C300 only sensors
+    if any(x in device.name for x in ["C300"]):
         sensors.append(
             SolixSensorEntity(
                 device, "DC Timer", None, "dc_timer", SensorDeviceClass.TIMESTAMP
