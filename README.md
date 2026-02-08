@@ -31,6 +31,19 @@ Home Assistant integration which allows for the monitoring of Anker Solix device
 4. Restart your instance.
 
 
+## Setup
+
+1. Ensure device is in pairing mode. This can be achieved by pressing the IoT button or holding it to reset Bluetooth. The device indicator on the screen should be flashing.
+2. Select the device in Home Assistant. It should be automatically detected.
+3. Add the device and press confirm once prompted.
+
+
+## Limitations
+
+- This integration can only monitor the power station, it cannot control it (i.e turn things on and off).
+- It is not possible to use Bluetooth and Wi-Fi at the same time.
+
+
 ## Adding support for new devices
 
 Support for new devices can be added by setting up this integration with an unsupported device and enabling debug logging, this causes the raw telemetry data and differences between values between updates to be printed to the debug log, this can be used to determine what bytes mean what by turning things on and off and finding what corresponds with that in the log. You are welcome to submit a PR to the underlying library [SolixBLE](https://github.com/flip-dots/SolixBLE) to add support or to raise a GitHub issue with all of the indexes of the values and what they correspond to and I am happy to add support myself.
