@@ -42,11 +42,12 @@ async def async_setup_entry(
 
     # Common sensors
     if any(x in device.name for x in ["C300", "C1000"]):
-        sensors.append(
-            SolixSensorEntity(
-                device, "AC Timer", None, "ac_timer", SensorDeviceClass.TIMESTAMP
-            )
-        )
+        # TODO: Re-add!
+        # sensors.append(
+        #     SolixSensorEntity(
+        #         device, "AC Timer", None, "ac_timer", SensorDeviceClass.TIMESTAMP
+        #     )
+        # )
         sensors.append(
             SolixSensorEntity(device, "Remaining Hours", "hours", "hours_remaining"),
         )
@@ -106,15 +107,16 @@ async def async_setup_entry(
                 device, "USB A1 Power", "W", "usb_a1_power", SensorDeviceClass.POWER
             )
         )
-        sensors.append(
-            SolixSensorEntity(
-                device,
-                "Solar Power In",
-                "W",
-                "solar_power_in",
-                SensorDeviceClass.POWER,
-            )
-        )
+        # TODO: Re-add!
+        # sensors.append(
+        #     SolixSensorEntity(
+        #         device,
+        #         "Solar Power In",
+        #         "W",
+        #         "solar_power_in",
+        #         SensorDeviceClass.POWER,
+        #     )
+        # )
         sensors.append(
             SolixSensorEntity(
                 device, "Total Power In", "W", "power_in", SensorDeviceClass.POWER
@@ -137,11 +139,12 @@ async def async_setup_entry(
 
     # C300 only sensors
     if any(x in device.name for x in ["C300"]):
-        sensors.append(
-            SolixSensorEntity(
-                device, "DC Timer", None, "dc_timer", SensorDeviceClass.TIMESTAMP
-            )
-        )
+        # TODO: Re-add!
+        # sensors.append(
+        #     SolixSensorEntity(
+        #         device, "DC Timer", None, "dc_timer", SensorDeviceClass.TIMESTAMP
+        #     )
+        # )
         sensors.append(
             SolixSensorEntity(
                 device,
@@ -160,16 +163,17 @@ async def async_setup_entry(
                 SensorDeviceClass.POWER,
             )
         )
-        sensors.append(
-            SolixSensorEntity(
-                device,
-                "Status Solar",
-                None,
-                "solar_port",
-                SensorDeviceClass.ENUM,
-                PORT_STATUS_STRINGS,
-            )
-        )
+        # TODO: Re-add!
+        # sensors.append(
+        #     SolixSensorEntity(
+        #         device,
+        #         "Status Solar",
+        #         None,
+        #         "solar_port",
+        #         SensorDeviceClass.ENUM,
+        #         PORT_STATUS_STRINGS,
+        #     )
+        # )
         sensors.append(
             SolixSensorEntity(
                 device,
@@ -220,16 +224,17 @@ async def async_setup_entry(
                 PORT_STATUS_STRINGS,
             )
         )
-        sensors.append(
-            SolixSensorEntity(
-                device,
-                "Status Light",
-                None,
-                "light",
-                SensorDeviceClass.ENUM,
-                LIGHT_STATUS_STRINGS,
-            )
-        )
+        # TODO: Re-add!
+        # sensors.append(
+        #     SolixSensorEntity(
+        #         device,
+        #         "Status Light",
+        #         None,
+        #         "light",
+        #         SensorDeviceClass.ENUM,
+        #         LIGHT_STATUS_STRINGS,
+        #     )
+        # )
 
     # C1000 only sensors
     if any(x in device.name for x in ["C1000"]):
