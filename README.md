@@ -43,6 +43,16 @@ Home Assistant integration which allows for the monitoring of Anker Solix device
 - This integration can only monitor the power station, it cannot control it (i.e turn things on and off).
 - It is not possible to use Bluetooth and Wi-Fi at the same time.
 
+I ran into some issues connecting using C1000 power station with the default configuration for ESP32 Bluetooth proxies, though my C300 worked fine. The following configuration fixed it:
+```yaml
+bluetooth_proxy:
+  cache_services: false
+
+esp32_ble_tracker:
+  scan_parameters:
+    active: true
+```
+
 
 ## Adding support for new devices
 
