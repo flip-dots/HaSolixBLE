@@ -42,9 +42,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: SolixBLEConfigEntry) -> 
         )
 
     device = None
-    if ble_device.name == "Anker SOLIX C300X":
+    if "Anker SOLIX C300" in ble_device.name:
         device = C300(ble_device)
-    elif ble_device.name == "Anker SOLIX C1000":
+    elif "Anker SOLIX C1000" in ble_device.name:
         device = C1000(ble_device)
     else:
         _LOGGER.warning(
