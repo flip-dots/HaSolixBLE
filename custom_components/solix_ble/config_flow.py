@@ -6,6 +6,7 @@ import logging
 from typing import Any
 
 from SolixBLE import Generic, C300, C1000
+from . import get_power_station_class
 import voluptuous as vol
 
 from homeassistant.components import bluetooth
@@ -17,14 +18,14 @@ from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
 from homeassistant.const import CONF_MAC, CONF_NAME
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
-from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers import device_registry, selector
 
-from .const import DOMAIN
+from .const import DOMAIN, Models
 
 _LOGGER = logging.getLogger(__name__)
 
 
-async def validate_input(hass: HomeAssistant, address: str) -> None:
+async def validate_input(hass: HomeAssistant, address: str, model: Models) -> None:
     """Validate that we can connect."""
 
     ble_device = async_ble_device_from_address(hass, address.upper(), connectable=True)
@@ -37,26 +38,16 @@ async def validate_input(hass: HomeAssistant, address: str) -> None:
             raise ScannerNotAvailable
         raise NotFound
 
-    if ble_device.name is None:
+    PowerStationClass = get_power_station_class(model)
+    if PowerStationClass is Generic:
         _LOGGER.warning(
-            f"The device '{ble_device.address}' was found but its name is not present in the advertisement data. Try again later..."
+            f"The device '{ble_device.name}' is not supported and values will not be available to Home Assistant! "
+            f"However when the integration is in debug mode the raw telemetry data and differences between status "
+            f"updates will be printed in the log and this can be used to aid in adding support for new devices."
         )
-        raise NotFound
 
+    device = PowerStationClass(ble_device)
     try:
-        device = None
-        if "Anker SOLIX C300" in ble_device.name:
-            device = C300(ble_device)
-        elif "Anker SOLIX C1000" in ble_device.name:
-            device = C1000(ble_device)
-        else:
-            _LOGGER.warning(
-                f"The device '{ble_device.name}' is not supported and values will not be available to Home Assistant! "
-                f"However when the integration is in debug mode the raw telemetry data and differences between status "
-                f"updates will be printed in the log and this can be used to aid in adding support for new devices."
-            )
-            device = Generic(ble_device)
-
         if not await device.connect():
             raise CannotConnect
 
@@ -69,7 +60,7 @@ async def validate_input(hass: HomeAssistant, address: str) -> None:
 class SolixBLEConfigFlow(ConfigFlow, domain=DOMAIN):
     """Handle a config flow for SolixBLE."""
 
-    VERSION = 1
+    VERSION = 2
 
     def __init__(self) -> None:
         """Initialize the config flow."""
@@ -85,7 +76,7 @@ class SolixBLEConfigFlow(ConfigFlow, domain=DOMAIN):
             discovery_info.name,
         )
 
-        unique_id = dr.format_mac(discovery_info.address)
+        unique_id = device_registry.format_mac(discovery_info.address)
         await self.async_set_unique_id(unique_id)
         self._abort_if_unique_id_configured()
 
@@ -106,10 +97,11 @@ class SolixBLEConfigFlow(ConfigFlow, domain=DOMAIN):
 
         if user_input is not None:
             try:
-                unique_id = dr.format_mac(self._discovery_info.address)
+                unique_id = device_registry.format_mac(self._discovery_info.address)
                 await self.async_set_unique_id(unique_id)
                 self._abort_if_unique_id_configured()
-                await validate_input(self.hass, unique_id)
+                model = Models(user_input["device_model"])
+                await validate_input(self.hass, unique_id, model)
 
             except CannotConnect:
                 errors["base"] = "cannot_connect"
@@ -123,11 +115,20 @@ class SolixBLEConfigFlow(ConfigFlow, domain=DOMAIN):
                 _LOGGER.exception("Unexpected exception")
                 errors["base"] = "unknown"
             else:
-                return self.async_create_entry(title=self._discovery_info.name, data={})
+                return self.async_create_entry(
+                    title=self._discovery_info.name, data={"model": model}
+                )
 
         return self.async_show_form(
             step_id="confirm",
-            data_schema=vol.Schema({}),
+            data_schema=vol.Schema({
+                vol.Required("device_model"): selector.SelectSelector(
+                    selector.SelectSelectorConfig(
+                        options=[model.value for model in Models],
+                        mode=selector.SelectSelectorMode.DROPDOWN
+                    )
+                )
+            }),
             errors=errors,
             description_placeholders={
                 CONF_NAME: self._discovery_info.name,

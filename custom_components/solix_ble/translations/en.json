@@ -12,7 +12,7 @@
         },
         "step": {
             "confirm": {
-                "description": "Do you want to set up {name} ({mac})? Make sure it is in pairing mode!"
+                "description": "Select the correct model for {name} ({mac}). Make sure the connection light is blinking!"
             }
         }
     }

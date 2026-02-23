@@ -4,6 +4,7 @@ import logging
 
 from SolixBLE import SolixBLEDevice, Generic, C300, C1000
 
+from .const import Models
 from homeassistant.components.bluetooth import (
     async_ble_device_from_address,
     async_scanner_count,
@@ -18,11 +19,25 @@ _LOGGER = logging.getLogger(__name__)
 type SolixBLEConfigEntry = ConfigEntry[SolixBLEDevice]
 
 
+def get_power_station_class(model: Models) -> SolixBLEDevice:
+    """Return correct class for power station from model."""
+
+    if model is Models.C300:
+        return C300
+    elif model is Models.C1000:
+        return C1000
+    elif model is Models.UNKNOWN:
+        return Generic
+    else:
+        raise NotImplementedError(f"Unexpected model. Got: '{type(model)}'!")
+
+
 async def async_setup_entry(hass: HomeAssistant, entry: SolixBLEConfigEntry) -> bool:
     """Set up the integration from a config entry."""
 
     assert entry.unique_id is not None
     address = entry.unique_id.upper()
+    model = entry.data["model"]
 
     ble_device = async_ble_device_from_address(hass, address, connectable=True)
 
@@ -36,24 +51,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: SolixBLEConfigEntry) -> 
             )
         raise ConfigEntryNotReady("The device was not found.")
 
-    if ble_device.name is None:
-        raise ConfigEntryNotReady(
-            "The device was found but its name is unknown. Waiting until name is discovered..."
-        )
-
-    device = None
-    if "Anker SOLIX C300" in ble_device.name:
-        device = C300(ble_device)
-    elif "Anker SOLIX C1000" in ble_device.name:
-        device = C1000(ble_device)
-    else:
+    PowerStationClass = get_power_station_class(model)
+    if PowerStationClass is Generic:
         _LOGGER.warning(
             f"The device '{ble_device.name}' is not supported and values will not be available to Home Assistant! "
             f"However when the integration is in debug mode the raw telemetry data and differences between status "
             f"updates will be printed in the log and this can be used to aid in adding support for new devices."
         )
-        device = Generic(ble_device)
 
+    device = PowerStationClass(ble_device)
     if not await device.connect():
         raise ConfigEntryNotReady("Device found but unable to connect.")
 
