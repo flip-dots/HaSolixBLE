@@ -31,7 +31,7 @@ async def async_setup_entry(
     """Set up the Sensors."""
 
     device = config_entry.runtime_data
-    sensors = []
+    sensors: list[SolixSensorEntity] = []
 
     # Common sensors
     if type(device) in [C300, C1000]:
@@ -226,9 +226,11 @@ async def async_setup_entry(
 
     # C1000 only sensors
     if type(device) is C1000:
-        SolixSensorEntity(
-            device, "USB A2 Power", "W", "usb_a2_power", SensorDeviceClass.POWER
-        ),
+        sensors.append(
+            SolixSensorEntity(
+                device, "USB A2 Power", "W", "usb_a2_power", SensorDeviceClass.POWER
+            ),
+        )
 
     async_add_entities(sensors)
 
