@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from SolixBLE import SolixBLEDevice, C300, C1000, Generic
+from SolixBLE import SolixBLEDevice, C300, C1000
 
 from homeassistant.components.sensor import SensorEntity, SensorStateClass
 from homeassistant.components.sensor.const import SensorDeviceClass
@@ -33,21 +33,13 @@ async def async_setup_entry(
     device = config_entry.runtime_data
     sensors = []
 
-    if type(device) is Generic:
-        _LOGGER.warning(
-            f"The device '{device.name}' is not supported and values will not be available to Home Assistant! "
-            f"However when the integration is in debug mode the raw telemetry data and differences between status "
-            f"updates will be printed in the log and this can be used to aid in adding support for new devices."
-        )
-
     # Common sensors
-    if any(x in device.name for x in ["C300", "C1000"]):
-        # TODO: Re-add!
-        # sensors.append(
-        #     SolixSensorEntity(
-        #         device, "AC Timer", None, "ac_timer", SensorDeviceClass.TIMESTAMP
-        #     )
-        # )
+    if type(device) in [C300, C1000]:
+        sensors.append(
+            SolixSensorEntity(
+                device, "AC Timer", None, "ac_timer", SensorDeviceClass.TIMESTAMP
+            )
+        )
         sensors.append(
             SolixSensorEntity(device, "Remaining Hours", "hours", "hours_remaining"),
         )
@@ -107,16 +99,15 @@ async def async_setup_entry(
                 device, "USB A1 Power", "W", "usb_a1_power", SensorDeviceClass.POWER
             )
         )
-        # TODO: Re-add!
-        # sensors.append(
-        #     SolixSensorEntity(
-        #         device,
-        #         "Solar Power In",
-        #         "W",
-        #         "solar_power_in",
-        #         SensorDeviceClass.POWER,
-        #     )
-        # )
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "Solar Power In",
+                "W",
+                "solar_power_in",
+                SensorDeviceClass.POWER,
+            )
+        )
         sensors.append(
             SolixSensorEntity(
                 device, "Total Power In", "W", "power_in", SensorDeviceClass.POWER
@@ -138,13 +129,12 @@ async def async_setup_entry(
         )
 
     # C300 only sensors
-    if any(x in device.name for x in ["C300"]):
-        # TODO: Re-add!
-        # sensors.append(
-        #     SolixSensorEntity(
-        #         device, "DC Timer", None, "dc_timer", SensorDeviceClass.TIMESTAMP
-        #     )
-        # )
+    if type(device) is C300:
+        sensors.append(
+            SolixSensorEntity(
+                device, "DC Timer", None, "dc_timer", SensorDeviceClass.TIMESTAMP
+            )
+        )
         sensors.append(
             SolixSensorEntity(
                 device,
@@ -163,17 +153,16 @@ async def async_setup_entry(
                 SensorDeviceClass.POWER,
             )
         )
-        # TODO: Re-add!
-        # sensors.append(
-        #     SolixSensorEntity(
-        #         device,
-        #         "Status Solar",
-        #         None,
-        #         "solar_port",
-        #         SensorDeviceClass.ENUM,
-        #         PORT_STATUS_STRINGS,
-        #     )
-        # )
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "Status Solar",
+                None,
+                "solar_port",
+                SensorDeviceClass.ENUM,
+                PORT_STATUS_STRINGS,
+            )
+        )
         sensors.append(
             SolixSensorEntity(
                 device,
@@ -224,20 +213,19 @@ async def async_setup_entry(
                 PORT_STATUS_STRINGS,
             )
         )
-        # TODO: Re-add!
-        # sensors.append(
-        #     SolixSensorEntity(
-        #         device,
-        #         "Status Light",
-        #         None,
-        #         "light",
-        #         SensorDeviceClass.ENUM,
-        #         LIGHT_STATUS_STRINGS,
-        #     )
-        # )
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "Status Light",
+                None,
+                "light",
+                SensorDeviceClass.ENUM,
+                LIGHT_STATUS_STRINGS,
+            )
+        )
 
     # C1000 only sensors
-    if any(x in device.name for x in ["C1000"]):
+    if type(device) is C1000:
         SolixSensorEntity(
             device, "USB A2 Power", "W", "usb_a2_power", SensorDeviceClass.POWER
         ),
