@@ -60,7 +60,7 @@ async def validate_input(hass: HomeAssistant, address: str, model: Models) -> No
 class SolixBLEConfigFlow(ConfigFlow, domain=DOMAIN):
     """Handle a config flow for SolixBLE."""
 
-    VERSION = 2
+    VERSION = 1
 
     def __init__(self) -> None:
         """Initialize the config flow."""
@@ -121,14 +121,16 @@ class SolixBLEConfigFlow(ConfigFlow, domain=DOMAIN):
 
         return self.async_show_form(
             step_id="confirm",
-            data_schema=vol.Schema({
-                vol.Required("device_model"): selector.SelectSelector(
-                    selector.SelectSelectorConfig(
-                        options=[model.value for model in Models],
-                        mode=selector.SelectSelectorMode.DROPDOWN
+            data_schema=vol.Schema(
+                {
+                    vol.Required("device_model"): selector.SelectSelector(
+                        selector.SelectSelectorConfig(
+                            options=[model.value for model in Models],
+                            mode=selector.SelectSelectorMode.DROPDOWN,
+                        )
                     )
-                )
-            }),
+                }
+            ),
             errors=errors,
             description_placeholders={
                 CONF_NAME: self._discovery_info.name,
