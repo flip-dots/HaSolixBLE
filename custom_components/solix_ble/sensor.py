@@ -5,14 +5,13 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from SolixBLE import SolixBLEDevice, C300, C1000
-
 from homeassistant.components.sensor import SensorEntity, SensorStateClass
 from homeassistant.components.sensor.const import SensorDeviceClass
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import CONNECTION_BLUETOOTH, DeviceInfo
-from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.util.dt import as_local
+from SolixBLE import C300, C1000, SolixBLEDevice
 
 from .const import LIGHT_STATUS_STRINGS, PORT_STATUS_STRINGS
 
@@ -26,12 +25,12 @@ if TYPE_CHECKING:
 async def async_setup_entry(
     hass: HomeAssistant,
     config_entry: SolixBLEConfigEntry,
-    async_add_entities: AddConfigEntryEntitiesCallback,
+    async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the Sensors."""
 
     device = config_entry.runtime_data
-    sensors = []
+    sensors: list[SolixSensorEntity] = []
 
     # Common sensors
     if type(device) in [C300, C1000]:
@@ -121,6 +120,16 @@ async def async_setup_entry(
         sensors.append(
             SolixSensorEntity(
                 device,
+                "Status Solar",
+                None,
+                "solar_port",
+                SensorDeviceClass.ENUM,
+                PORT_STATUS_STRINGS,
+            )
+        )
+        sensors.append(
+            SolixSensorEntity(
+                device,
                 "Battery Percentage",
                 "%",
                 "battery_percentage",
@@ -151,16 +160,6 @@ async def async_setup_entry(
                 "W",
                 "dc_power_out",
                 SensorDeviceClass.POWER,
-            )
-        )
-        sensors.append(
-            SolixSensorEntity(
-                device,
-                "Status Solar",
-                None,
-                "solar_port",
-                SensorDeviceClass.ENUM,
-                PORT_STATUS_STRINGS,
             )
         )
         sensors.append(
@@ -226,9 +225,11 @@ async def async_setup_entry(
 
     # C1000 only sensors
     if type(device) is C1000:
-        SolixSensorEntity(
-            device, "USB A2 Power", "W", "usb_a2_power", SensorDeviceClass.POWER
-        ),
+        sensors.append(
+            SolixSensorEntity(
+                device, "USB A2 Power", "W", "usb_a2_power", SensorDeviceClass.POWER
+            ),
+        )
 
     async_add_entities(sensors)
 
@@ -255,7 +256,7 @@ class SolixSensorEntity(SensorEntity):
         self._device = device
         self._address = device.address
         self._attr_name = name
-        self._attr_unique_id = f"{device.address}-{name}"
+        self._attr_unique_id = f"{device.address}_{attribute}"
         self._attr_native_unit_of_measurement = unit
         self._attr_device_class = device_class
         self._attr_options = enum_options

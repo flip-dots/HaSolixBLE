@@ -52,7 +52,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: SolixBLEConfigEntry) -> 
         raise ConfigEntryNotReady("The device was not found.")
 
     PowerStationClass = get_power_station_class(model)
-    if PowerStationClass is Generic:
+    if model is Models.UNKNOWN:
         _LOGGER.warning(
             f"The device '{ble_device.name}' is not supported and values will not be available to Home Assistant! "
             f"However when the integration is in debug mode the raw telemetry data and differences between status "
@@ -60,8 +60,16 @@ async def async_setup_entry(hass: HomeAssistant, entry: SolixBLEConfigEntry) -> 
         )
 
     device = PowerStationClass(ble_device)
-    if not await device.connect():
-        raise ConfigEntryNotReady("Device found but unable to connect.")
+    try:
+        if not await device.connect():
+            raise ConfigEntryNotReady("Device found but unable to connect.")
+    except Exception as e:
+        if type(e) is ConfigEntryNotReady:
+            raise e
+        else:
+            raise ConfigEntryNotReady(
+                "Unexpected exception when connecting to device."
+            ) from e
 
     if not device.available:
         raise ConfigEntryNotReady(

@@ -1,0 +1,7 @@
+pytest
+pytest-asyncio
+pytest-homeassistant-custom-component
+SolixBLE
+pyserial
+pytest-cov
+aiousbwatcher
