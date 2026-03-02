@@ -45,7 +45,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: SolixBLEConfigEntry) -> 
 
     assert entry.unique_id is not None
     address = entry.unique_id.upper()
-    model = entry.data["model"]
+    model = Models(entry.data["model"])
 
     ble_device = async_ble_device_from_address(hass, address, connectable=True)
 

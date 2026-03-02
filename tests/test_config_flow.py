@@ -100,7 +100,7 @@ async def test_bluetooth_form(
     assert result["result"].unique_id == device_registry.format_mac(
         mock_device_details.addr
     )
-    assert result["result"].data == {"model": mock_device_details.model_class}
+    assert result["result"].data == {"model": mock_device_details.model_class.value}
 
     assert len(mock_setup_entry.mock_calls) == 1
 
@@ -231,7 +231,7 @@ async def test_bluetooth_form_error(
     assert result["result"].unique_id == device_registry.format_mac(
         mock_device_details.addr
     )
-    assert result["result"].data == {"model": mock_device_details.model_class}
+    assert result["result"].data == {"model": mock_device_details.model_class.value}
 
     assert len(mock_setup_entry.mock_calls) == 1
 
