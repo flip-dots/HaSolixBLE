@@ -2,9 +2,6 @@
 
 import logging
 
-from SolixBLE import SolixBLEDevice, Generic, C300, C1000
-
-from .const import Models
 from homeassistant.components.bluetooth import (
     async_ble_device_from_address,
     async_scanner_count,
@@ -13,6 +10,9 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
+from SolixBLE import C300, C300DC, C1000, C1000G2, F2000, F3800, Generic, SolixBLEDevice
+
+from .const import Models
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -24,8 +24,16 @@ def get_power_station_class(model: Models) -> SolixBLEDevice:
 
     if model is Models.C300:
         return C300
+    elif model is Models.C300DC:
+        return C300DC
     elif model is Models.C1000:
         return C1000
+    elif model is Models.C1000G2:
+        return C1000G2
+    elif model is Models.F2000:
+        return F2000
+    elif model is Models.F3800:
+        return F3800
     elif model is Models.UNKNOWN:
         return Generic
     else:
