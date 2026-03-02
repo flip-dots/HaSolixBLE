@@ -47,11 +47,13 @@ async def validate_input(hass: HomeAssistant, address: str, model: Models) -> No
 
     device = PowerStationClass(ble_device)
     try:
-        if not await device.connect():
+        await device.connect()
+
+        if not device.connected:
             raise CannotConnect
 
-        if not device.available:
-            raise CannotSubscribe
+        if not device.negotiated:
+            raise CannotNegotiate
     finally:
         await device.disconnect()
 
@@ -104,8 +106,8 @@ class SolixBLEConfigFlow(ConfigFlow, domain=DOMAIN):
 
             except CannotConnect:
                 errors["base"] = "cannot_connect"
-            except CannotSubscribe:
-                errors["base"] = "cannot_subscribe"
+            except CannotNegotiate:
+                errors["base"] = "cannot_negotiate"
             except ScannerNotAvailable:
                 errors["base"] = "no_scanners"
             except NotFound:
@@ -142,8 +144,8 @@ class CannotConnect(HomeAssistantError):
     """Error to indicate we cannot connect."""
 
 
-class CannotSubscribe(HomeAssistantError):
-    """Error to indicate we cannot get telemetry."""
+class CannotNegotiate(HomeAssistantError):
+    """Error to indicate we failed to negotiate encryption schemes."""
 
 
 class ScannerNotAvailable(HomeAssistantError):

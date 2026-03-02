@@ -65,7 +65,11 @@ async def test_setup(
             side_effect=[True],
         ),
         patch(
-            "SolixBLE.SolixBLEDevice.available",
+            "SolixBLE.SolixBLEDevice.connected",
+            side_effect=[True],
+        ),
+        patch(
+            "SolixBLE.SolixBLEDevice.negotiated",
             side_effect=[True],
         ),
     ):
@@ -75,13 +79,14 @@ async def test_setup(
 
 
 @pytest.mark.parametrize(
-    "mock_config_entry,mock_device_details,ble_device,scanner_count,connect,available,error",
+    "mock_config_entry,mock_device_details,ble_device,scanner_count,connect,connected,negotiated,error",
     [
         pytest.param(
             MOCK_C300_DETAILS,
             MOCK_C300_DETAILS,
             None,
             1,
+            True,
             True,
             True,
             "The device was not found",
@@ -94,6 +99,7 @@ async def test_setup(
             0,
             True,
             True,
+            True,
             "No Bluetooth scanners",
             id="no_scanners",
         ),
@@ -102,6 +108,7 @@ async def test_setup(
             MOCK_UNKNOWN_DETAILS,
             MOCK_UNKNOWN_DETAILS.get_ble_device(),
             1,
+            False,
             False,
             True,
             f"'{MOCK_UNKNOWN_DETAILS.name}' is not supported",
@@ -112,17 +119,8 @@ async def test_setup(
             MOCK_C300_DETAILS,
             MOCK_C300_DETAILS.get_ble_device(),
             1,
-            False,
-            True,
-            "Device found but unable to connect",
-            id="connect_false",
-        ),
-        pytest.param(
-            MOCK_C300_DETAILS,
-            MOCK_C300_DETAILS,
-            MOCK_C300_DETAILS.get_ble_device(),
-            1,
             Exception("Something went wrong"),
+            True,
             True,
             "Unexpected exception when connecting to device",
             id="connect_exception",
@@ -132,10 +130,22 @@ async def test_setup(
             MOCK_C300_DETAILS,
             MOCK_C300_DETAILS.get_ble_device(),
             1,
+            Exception("Something went wrong"),
+            False,
+            True,
+            "Unexpected exception when connecting to device",
+            id="connected_false",
+        ),
+        pytest.param(
+            MOCK_C300_DETAILS,
+            MOCK_C300_DETAILS,
+            MOCK_C300_DETAILS.get_ble_device(),
+            1,
+            True,
             True,
             False,
-            "Device connected but unable to subscribe to telemetry",
-            id="available_false",
+            "Device connected but failed to negotiate encryption",
+            id="negotiated_false",
         ),
     ],
     indirect=["mock_config_entry"],
@@ -148,7 +158,8 @@ async def test_setup_error(
     ble_device: BLEDevice | None,
     scanner_count: int,
     connect: Exception | bool,
-    available: bool,
+    connected: bool,
+    negotiated: bool,
     error: str,
 ) -> None:
     """Test that ConfigEntryNotReady is raised if there is an error condition."""
@@ -169,9 +180,14 @@ async def test_setup_error(
             side_effect=[connect],
         ),
         patch(
-            "SolixBLE.SolixBLEDevice.available",
+            "SolixBLE.SolixBLEDevice.connected",
             new_callable=PropertyMock,
-            return_value=available,
+            return_value=connected,
+        ),
+        patch(
+            "SolixBLE.SolixBLEDevice.negotiated",
+            new_callable=PropertyMock,
+            return_value=negotiated,
         ),
     ):
         assert await async_setup_component(hass, DOMAIN, {}) is True
@@ -195,7 +211,11 @@ async def test_setup_error(
             side_effect=[True],
         ),
         patch(
-            "SolixBLE.SolixBLEDevice.available",
+            "SolixBLE.SolixBLEDevice.connected",
+            side_effect=[True],
+        ),
+        patch(
+            "SolixBLE.SolixBLEDevice.negotiated",
             side_effect=[True],
         ),
     ):

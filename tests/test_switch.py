@@ -103,7 +103,15 @@ async def test_switch_entities(
             side_effect=[True],
         ),
         patch(
-            f"SolixBLE.{class_name}.available",
+            f"SolixBLE.{class_name}.connected",
+            side_effect=[True],
+        ),
+        patch(
+            f"SolixBLE.{class_name}.negotiated",
+            side_effect=[True],
+        ),
+        patch(
+            "SolixBLE.SolixBLEDevice.available",
             side_effect=[True],
         ),
         (

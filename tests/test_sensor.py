@@ -49,7 +49,7 @@ from . import (
             MOCK_C1000G2_DETAILS,
             MOCK_C1000G2_DETAILS,
             "C1000G2",
-            {},
+            {"temperature": 27},
             id="c1000G2",
         ),
         pytest.param(
@@ -100,7 +100,15 @@ async def test_sensor_entities(
             side_effect=[True],
         ),
         patch(
-            f"SolixBLE.{class_name}.available",
+            f"SolixBLE.{class_name}.connected",
+            side_effect=[True],
+        ),
+        patch(
+            f"SolixBLE.{class_name}.negotiated",
+            side_effect=[True],
+        ),
+        patch(
+            "SolixBLE.SolixBLEDevice.available",
             side_effect=[True],
         ),
         ExitStack() as dynamic_context,

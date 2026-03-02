@@ -69,19 +69,18 @@ async def async_setup_entry(hass: HomeAssistant, entry: SolixBLEConfigEntry) -> 
 
     device = PowerStationClass(ble_device)
     try:
-        if not await device.connect():
-            raise ConfigEntryNotReady("Device found but unable to connect.")
+        await device.connect()
     except Exception as e:
-        if type(e) is ConfigEntryNotReady:
-            raise e
-        else:
-            raise ConfigEntryNotReady(
-                "Unexpected exception when connecting to device."
-            ) from e
-
-    if not device.available:
         raise ConfigEntryNotReady(
-            "Device connected but unable to subscribe to telemetry."
+            "Unexpected exception when connecting to device."
+        ) from e
+
+    if not device.connected:
+        raise ConfigEntryNotReady("Device found but unable to connect.")
+
+    if not device.negotiated:
+        raise ConfigEntryNotReady(
+            "Device connected but failed to negotiate encryption."
         )
 
     entry.runtime_data = device
