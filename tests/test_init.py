@@ -14,7 +14,18 @@ from pytest_homeassistant_custom_component.common import async_fire_time_changed
 
 from custom_components.solix_ble.const import DOMAIN
 
-from . import MOCK_C300_DETAILS, MOCK_UNKNOWN_DETAILS, MockDeviceDetails
+from . import (
+    MOCK_C300_DETAILS,
+    MOCK_C300DC_DETAILS,
+    MOCK_C300X_DETAILS,
+    MOCK_C1000_DETAILS,
+    MOCK_C1000G2_DETAILS,
+    MOCK_C1000X_DETAILS,
+    MOCK_F2000_DETAILS,
+    MOCK_F3800_DETAILS,
+    MOCK_UNKNOWN_DETAILS,
+    MockDeviceDetails,
+)
 from .conftest import MockConfigEntry
 
 
@@ -22,6 +33,13 @@ from .conftest import MockConfigEntry
     "mock_config_entry,mock_device_details",
     [
         pytest.param(MOCK_C300_DETAILS, MOCK_C300_DETAILS, id="c300"),
+        pytest.param(MOCK_C300X_DETAILS, MOCK_C300X_DETAILS, id="c300x"),
+        pytest.param(MOCK_C300DC_DETAILS, MOCK_C300DC_DETAILS, id="c300dc"),
+        pytest.param(MOCK_C1000_DETAILS, MOCK_C1000_DETAILS, id="c1000"),
+        pytest.param(MOCK_C1000X_DETAILS, MOCK_C1000X_DETAILS, id="c1000x"),
+        pytest.param(MOCK_C1000G2_DETAILS, MOCK_C1000G2_DETAILS, id="c1000g2"),
+        pytest.param(MOCK_F2000_DETAILS, MOCK_F2000_DETAILS, id="f2000"),
+        pytest.param(MOCK_F3800_DETAILS, MOCK_F3800_DETAILS, id="f3800"),
     ],
     indirect=["mock_config_entry"],
 )

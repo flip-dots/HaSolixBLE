@@ -14,9 +14,13 @@ from custom_components.solix_ble.const import DOMAIN
 
 from . import (
     MOCK_C300_DETAILS,
+    MOCK_C300DC_DETAILS,
     MOCK_C300X_DETAILS,
     MOCK_C1000_DETAILS,
+    MOCK_C1000G2_DETAILS,
     MOCK_C1000X_DETAILS,
+    MOCK_F2000_DETAILS,
+    MOCK_F3800_DETAILS,
     MOCK_UNKNOWN_DETAILS,
     BLEDevice,
     MockDeviceDetails,
@@ -29,11 +33,25 @@ from .conftest import MockConfigEntry
     [
         MOCK_C300_DETAILS,
         MOCK_C300X_DETAILS,
+        MOCK_C300DC_DETAILS,
         MOCK_C1000_DETAILS,
         MOCK_C1000X_DETAILS,
+        MOCK_C1000G2_DETAILS,
+        MOCK_F2000_DETAILS,
+        MOCK_F3800_DETAILS,
         MOCK_UNKNOWN_DETAILS,
     ],
-    ids=["c300", "c300x", "c1000", "c1000x", "unknown"],
+    ids=[
+        "c300",
+        "c300x",
+        "c300dc",
+        "c1000",
+        "c1000x",
+        "c1000g2",
+        "f2000",
+        "f3800",
+        "unknown",
+    ],
 )
 async def test_bluetooth_form(
     hass: HomeAssistant,

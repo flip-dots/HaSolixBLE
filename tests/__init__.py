@@ -105,6 +105,13 @@ MOCK_C300X_DETAILS = MockDeviceDetails(
     model_class=Models.C300,
 )
 
+MOCK_C300DC_DETAILS = MockDeviceDetails(
+    name="Anker SOLIX C300X DC",
+    addr="AA:BB:CC:DD:EE:01",
+    model_string="C300(X) DC",
+    model_class=Models.C300DC,
+)
+
 MOCK_C1000_DETAILS = MockDeviceDetails(
     name="Anker SOLIX C1000",
     addr="AA:BB:CC:DD:EE:02",
@@ -117,6 +124,27 @@ MOCK_C1000X_DETAILS = MockDeviceDetails(
     addr="AA:BB:CC:DD:EE:03",
     model_string="C1000(X)",
     model_class=Models.C1000,
+)
+
+MOCK_C1000G2_DETAILS = MockDeviceDetails(
+    name="Anker SOLIX C1000 Gen 2",
+    addr="AA:BB:CC:DD:EE:03",
+    model_string="C1000(X) Gen 2",
+    model_class=Models.C1000G2,
+)
+
+MOCK_F2000_DETAILS = MockDeviceDetails(
+    name="Anker SOLIX F2000",
+    addr="AA:BB:CC:DD:EE:03",
+    model_string="F2000 (767)",
+    model_class=Models.F2000,
+)
+
+MOCK_F3800_DETAILS = MockDeviceDetails(
+    name="Anker SOLIX F3800",
+    addr="AA:BB:CC:DD:EE:03",
+    model_string="F3800",
+    model_class=Models.F3800,
 )
 
 MOCK_UNKNOWN_DETAILS = MockDeviceDetails(
