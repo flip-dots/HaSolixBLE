@@ -117,16 +117,16 @@ async def async_setup_entry(
                 device, "Total Power Out", "W", "power_out", SensorDeviceClass.POWER
             )
         ),
-        sensors.append(
-            SolixSensorEntity(
-                device,
-                "Status Solar",
-                None,
-                "solar_port",
-                SensorDeviceClass.ENUM,
-                PORT_STATUS_STRINGS,
-            )
-        )
+        # sensors.append(
+        #     SolixSensorEntity(
+        #         device,
+        #         "Status Solar",
+        #         None,
+        #         "solar_port",
+        #         SensorDeviceClass.ENUM,
+        #         PORT_STATUS_STRINGS,
+        #     )
+        # )
         sensors.append(
             SolixSensorEntity(
                 device,
