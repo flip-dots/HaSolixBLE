@@ -206,7 +206,6 @@ MOCK_C1000_TEST_DATA = {
     "power_out": ("total_power_out", 12),
     # TODO: Solar port is broken in underlying library
     # "solar_port": ("status_solar", PortStatus.INPUT),
-    "dc_output": ("status_dc_out", PortStatus.OUTPUT),
     "ac_output": ("status_ac_out", PortStatus.NOT_CONNECTED),
     "battery_percentage": 13,
 }

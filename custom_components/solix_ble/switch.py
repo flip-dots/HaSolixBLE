@@ -42,14 +42,6 @@ async def async_setup_entry(
                 ),
                 SolixSwitchEntity(
                     device,
-                    "DC Output",
-                    "dc_output",
-                    "dc_output",
-                    "turn_dc_on",
-                    "turn_dc_off",
-                ),
-                SolixSwitchEntity(
-                    device,
                     "Display",
                     "display_on_off",
                     None,
@@ -61,11 +53,29 @@ async def async_setup_entry(
 
     # C300 only switches
     if type(device) is C300:
-        pass
+        switches.append(
+            SolixSwitchEntity(
+                device,
+                "DC Output",
+                "dc_output",
+                "dc_output",
+                "turn_dc_on",
+                "turn_dc_off",
+            ),
+        )
 
     # C1000 only switches
     if type(device) is C1000:
-        pass
+        switches.append(
+            SolixSwitchEntity(
+                device,
+                "DC Output",
+                "dc_output",
+                None,
+                "turn_dc_on",
+                "turn_dc_off",
+            ),
+        )
 
     async_add_entities(switches)
 

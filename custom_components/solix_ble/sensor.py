@@ -241,7 +241,8 @@ async def async_setup_entry(
     # )
 
     # DC power out status
-    if type(device) in [C300, C1000, C1000G2, F3800]:
+    # TODO: Reenable for C1000 when underlying library fixes
+    if type(device) in [C300, C1000G2, F3800]:
         sensors.append(
             SolixSensorEntity(
                 device,
