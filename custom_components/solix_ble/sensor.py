@@ -181,10 +181,11 @@ async def async_setup_entry(
         sensors.append(
             SolixSensorEntity(
                 device,
-                "AC Output On",
+                "Status AC Out",
                 None,
-                "ac_on",
-                None,
+                "ac_output",
+                SensorDeviceClass.ENUM,
+                PORT_STATUS_STRINGS,
             )
         )
 
@@ -202,27 +203,13 @@ async def async_setup_entry(
         )
 
     # Solar power in
-    if type(device) in [C300, C1000, F2000, F3800]:
+    if type(device) in [C300, C300DC, C1000, C1000G2, F2000, F3800]:
         sensors.append(
             SolixSensorEntity(
                 device,
                 "Solar Power In",
                 "W",
                 "solar_power_in",
-                SensorDeviceClass.POWER,
-            )
-        )
-
-    # DC power in
-    # TODO: I should really decide if I want to use dc_in or solar_in
-    # instead of a mishmash
-    if type(device) in [C300DC, C1000G2]:
-        sensors.append(
-            SolixSensorEntity(
-                device,
-                "DC Power In",
-                "W",
-                "dc_power_in",
                 SensorDeviceClass.POWER,
             )
         )
@@ -254,13 +241,13 @@ async def async_setup_entry(
     # )
 
     # DC power out status
-    if type(device) in [C300, C1000G2, F3800]:
+    if type(device) in [C300, C1000, C1000G2, F3800]:
         sensors.append(
             SolixSensorEntity(
                 device,
                 "Status DC Out",
                 None,
-                "dc_port",
+                "dc_output",
                 SensorDeviceClass.ENUM,
                 PORT_STATUS_STRINGS,
             )

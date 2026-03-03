@@ -9,7 +9,7 @@ from homeassistant.components.switch import SwitchEntity
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import CONNECTION_BLUETOOTH, DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from SolixBLE import C300, C1000, SolixBLEDevice
+from SolixBLE import C300, C1000, PortStatus, SolixBLEDevice
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -30,26 +30,23 @@ async def async_setup_entry(
 
     # Common switches
     if type(device) in [C300, C1000]:
-        pass
-
-    # C300 only switches
-    if type(device) is C300:
-        pass
-
-    # C1000 only switches
-    if type(device) is C1000:
         switches.extend(
             [
                 SolixSwitchEntity(
                     device,
                     "AC Output",
                     "ac_output",
-                    "ac_on",
+                    "ac_output",
                     "turn_ac_on",
                     "turn_ac_off",
                 ),
                 SolixSwitchEntity(
-                    device, "DC Output", "dc_output", None, "turn_dc_on", "turn_dc_off"
+                    device,
+                    "DC Output",
+                    "dc_output",
+                    "dc_output",
+                    "turn_dc_on",
+                    "turn_dc_off",
                 ),
                 SolixSwitchEntity(
                     device,
@@ -61,6 +58,14 @@ async def async_setup_entry(
                 ),
             ]
         )
+
+    # C300 only switches
+    if type(device) is C300:
+        pass
+
+    # C1000 only switches
+    if type(device) is C1000:
+        pass
 
     async_add_entities(switches)
 
@@ -116,7 +121,21 @@ class SolixSwitchEntity(SwitchEntity):
         self._attr_available = self._device.available
 
         if self._state_attribute is not None:
-            self._attr_is_on = getattr(self._device, self._state_attribute)
+            state = getattr(self._device, self._state_attribute)
+
+            if type(state) is PortStatus:
+                if state is PortStatus.UNKNOWN:
+                    self._attr_is_on = None
+                elif state is PortStatus.NOT_CONNECTED:
+                    self._attr_is_on = False
+                elif state is PortStatus.OUTPUT:
+                    self._attr_is_on = True
+                else:
+                    raise RuntimeError(
+                        f"Unexpected port status '{state}' with type '{type(state)}'!"
+                    )
+            else:
+                self._attr_is_on = state
 
     def _state_change_callback(self) -> None:
         """Run when device informs of state update. Updates local properties."""

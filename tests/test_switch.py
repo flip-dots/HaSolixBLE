@@ -2,6 +2,7 @@
 
 import asyncio
 from contextlib import nullcontext
+from typing import Any, Union
 from unittest.mock import PropertyMock, patch
 
 import pytest
@@ -17,24 +18,59 @@ from homeassistant.const import (
 from homeassistant.core import HomeAssistant
 from homeassistant.setup import async_setup_component
 from pytest_homeassistant_custom_component.common import MockConfigEntry
-from SolixBLE import SolixBLEDevice
+from SolixBLE import PortStatus, SolixBLEDevice
+from sqlalchemy import union
 
 from custom_components.solix_ble.const import DOMAIN
 
-from . import MOCK_C1000_DETAILS, MockDeviceDetails
+from . import MOCK_C300_DETAILS, MOCK_C1000_DETAILS, MockDeviceDetails
 
 
 @pytest.mark.parametrize(
-    "mock_config_entry,mock_device_details,class_name,attribute,state_attribute,on_attribute,off_attribute",
+    "mock_config_entry,mock_device_details,class_name,attribute,state_attribute,on_attribute,off_attribute,on_off_sequence",
     [
+        pytest.param(
+            MOCK_C300_DETAILS,
+            MOCK_C300_DETAILS,
+            "C300",
+            "ac_output",
+            "ac_output",
+            "turn_ac_on",
+            "turn_ac_off",
+            (PortStatus.NOT_CONNECTED, PortStatus.OUTPUT, PortStatus.NOT_CONNECTED),
+            id="c300_ac",
+        ),
+        pytest.param(
+            MOCK_C300_DETAILS,
+            MOCK_C300_DETAILS,
+            "C300",
+            "dc_output",
+            "dc_output",
+            "turn_dc_on",
+            "turn_dc_off",
+            (PortStatus.NOT_CONNECTED, PortStatus.OUTPUT, PortStatus.NOT_CONNECTED),
+            id="c300_dc",
+        ),
+        pytest.param(
+            MOCK_C300_DETAILS,
+            MOCK_C300_DETAILS,
+            "C300",
+            "display",
+            None,
+            "turn_display_on",
+            "turn_display_off",
+            None,
+            id="c300_display",
+        ),
         pytest.param(
             MOCK_C1000_DETAILS,
             MOCK_C1000_DETAILS,
             "C1000",
             "ac_output",
-            "ac_on",
+            "ac_output",
             "turn_ac_on",
             "turn_ac_off",
+            (PortStatus.NOT_CONNECTED, PortStatus.OUTPUT, PortStatus.NOT_CONNECTED),
             id="c1000_ac",
         ),
         pytest.param(
@@ -42,9 +78,10 @@ from . import MOCK_C1000_DETAILS, MockDeviceDetails
             MOCK_C1000_DETAILS,
             "C1000",
             "dc_output",
-            None,
+            "dc_output",
             "turn_dc_on",
             "turn_dc_off",
+            (PortStatus.NOT_CONNECTED, PortStatus.OUTPUT, PortStatus.NOT_CONNECTED),
             id="c1000_dc",
         ),
         pytest.param(
@@ -55,6 +92,7 @@ from . import MOCK_C1000_DETAILS, MockDeviceDetails
             None,
             "turn_display_on",
             "turn_display_off",
+            None,
             id="c1000_display",
         ),
     ],
@@ -69,8 +107,13 @@ async def test_switch_entities(
     state_attribute: str | None,
     on_attribute: str,
     off_attribute: str,
+    on_off_sequence: Union[tuple[Any, Any, Any], None],
 ) -> None:
-    """Test that the entities are added and show the expected values."""
+    """
+    Test that the entities are added and show the expected values.
+
+    :param on_off_sequence: The sequence of values that will be sent to the switch entity to represent its changing state.
+    """
 
     mock_config_entry.add_to_hass(hass)
 
@@ -135,7 +178,7 @@ async def test_switch_entities(
 
         # If we have a state attribute we should start in the off position
         if state_attribute:
-            mock_state_attribute.return_value = False
+            mock_state_attribute.return_value = on_off_sequence[0]
             captured_self._run_state_changed_callbacks()
             await hass.async_block_till_done()
 
@@ -160,7 +203,7 @@ async def test_switch_entities(
 
         # If we have a state attribute it should now be in the on position
         if state_attribute:
-            mock_state_attribute.return_value = True
+            mock_state_attribute.return_value = on_off_sequence[1]
             captured_self._run_state_changed_callbacks()
 
             assert (
@@ -184,7 +227,7 @@ async def test_switch_entities(
 
         # If we have a state attribute it should now be in the off position
         if state_attribute:
-            mock_state_attribute.return_value = False
+            mock_state_attribute.return_value = on_off_sequence[2]
             captured_self._run_state_changed_callbacks()
 
             assert (
