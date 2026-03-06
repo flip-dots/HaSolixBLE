@@ -349,6 +349,7 @@ async def async_setup_entry(
                 "usb_port_c1",
                 SensorDeviceClass.ENUM,
                 PORT_STATUS_STRINGS,
+                None,
             )
         )
 
@@ -362,6 +363,7 @@ async def async_setup_entry(
                 "usb_port_c2",
                 SensorDeviceClass.ENUM,
                 PORT_STATUS_STRINGS,
+                None,
             )
         )
 
@@ -375,6 +377,7 @@ async def async_setup_entry(
                 "usb_port_c3",
                 SensorDeviceClass.ENUM,
                 PORT_STATUS_STRINGS,
+                None,
             )
         )
 
@@ -388,6 +391,7 @@ async def async_setup_entry(
                 "usb_port_c4",
                 SensorDeviceClass.ENUM,
                 PORT_STATUS_STRINGS,
+                None,
             )
         )
 
@@ -401,6 +405,7 @@ async def async_setup_entry(
                 "usb_port_a1",
                 SensorDeviceClass.ENUM,
                 PORT_STATUS_STRINGS,
+                None,
             )
         )
 
@@ -414,6 +419,7 @@ async def async_setup_entry(
                 "usb_port_a2",
                 SensorDeviceClass.ENUM,
                 PORT_STATUS_STRINGS,
+                None,
             )
         )
 
@@ -427,6 +433,7 @@ async def async_setup_entry(
                 "light",
                 SensorDeviceClass.ENUM,
                 LIGHT_STATUS_STRINGS,
+                None,
             )
         )
 
