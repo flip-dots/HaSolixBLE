@@ -49,6 +49,7 @@ async def async_setup_entry(
                 "charging_status",
                 SensorDeviceClass.ENUM,
                 CHARGING_STATUS_C300_STRINGS,
+                None,
             )
         )
 
@@ -62,6 +63,7 @@ async def async_setup_entry(
                 "charging_status",
                 SensorDeviceClass.ENUM,
                 CHARGING_STATUS_C300DC_STRINGS,
+                None,
             )
         )
 
@@ -75,6 +77,7 @@ async def async_setup_entry(
                 "charging_status",
                 SensorDeviceClass.ENUM,
                 CHARGING_STATUS_F3800_STRINGS,
+                None,
             )
         )
 
@@ -186,6 +189,7 @@ async def async_setup_entry(
                 "ac_output",
                 SensorDeviceClass.ENUM,
                 PORT_STATUS_STRINGS,
+                None,
             )
         )
 
@@ -237,6 +241,7 @@ async def async_setup_entry(
     #         "solar_port",
     #         SensorDeviceClass.ENUM,
     #         PORT_STATUS_STRINGS,
+    #         None,
     #     )
     # )
 
@@ -251,6 +256,7 @@ async def async_setup_entry(
                 "dc_output",
                 SensorDeviceClass.ENUM,
                 PORT_STATUS_STRINGS,
+                None,
             )
         )
 
