@@ -7,7 +7,7 @@
       },
       "error": {
         "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
-        "cannot_subscribe": "Unable to subscribe to telemetry. Is the device supported?",
+        "cannot_negotiate": "Failed to negotiate encryption, is the device too far?.",
         "no_scanners": "No Bluetooth scanners are available to search for the device.",
         "not_found": "The device was not found.",
         "unknown": "[%key:common::config_flow::error::unknown%]"

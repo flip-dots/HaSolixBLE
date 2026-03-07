@@ -2,9 +2,6 @@
 
 import logging
 
-from SolixBLE import SolixBLEDevice, Generic, C300, C1000
-
-from .const import Models
 from homeassistant.components.bluetooth import (
     async_ble_device_from_address,
     async_scanner_count,
@@ -13,6 +10,9 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
+from SolixBLE import C300, C300DC, C1000, C1000G2, F2000, F3800, Generic, SolixBLEDevice
+
+from .const import Models
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -24,8 +24,16 @@ def get_power_station_class(model: Models) -> SolixBLEDevice:
 
     if model is Models.C300:
         return C300
+    elif model is Models.C300DC:
+        return C300DC
     elif model is Models.C1000:
         return C1000
+    elif model is Models.C1000G2:
+        return C1000G2
+    elif model is Models.F2000:
+        return F2000
+    elif model is Models.F3800:
+        return F3800
     elif model is Models.UNKNOWN:
         return Generic
     else:
@@ -37,7 +45,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: SolixBLEConfigEntry) -> 
 
     assert entry.unique_id is not None
     address = entry.unique_id.upper()
-    model = entry.data["model"]
+    model = Models(entry.data["model"])
 
     ble_device = async_ble_device_from_address(hass, address, connectable=True)
 
@@ -61,24 +69,25 @@ async def async_setup_entry(hass: HomeAssistant, entry: SolixBLEConfigEntry) -> 
 
     device = PowerStationClass(ble_device)
     try:
-        if not await device.connect():
-            raise ConfigEntryNotReady("Device found but unable to connect.")
+        await device.connect()
     except Exception as e:
-        if type(e) is ConfigEntryNotReady:
-            raise e
-        else:
-            raise ConfigEntryNotReady(
-                "Unexpected exception when connecting to device."
-            ) from e
-
-    if not device.available:
         raise ConfigEntryNotReady(
-            "Device connected but unable to subscribe to telemetry."
+            "Unexpected exception when connecting to device."
+        ) from e
+
+    if not device.connected:
+        raise ConfigEntryNotReady("Device found but unable to connect.")
+
+    if not device.negotiated:
+        raise ConfigEntryNotReady(
+            "Device connected but failed to negotiate encryption."
         )
 
     entry.runtime_data = device
 
-    await hass.config_entries.async_forward_entry_setups(entry, [Platform.SENSOR])
+    await hass.config_entries.async_forward_entry_setups(
+        entry, [Platform.SENSOR, Platform.SWITCH]
+    )
 
     return True
 
@@ -86,10 +95,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: SolixBLEConfigEntry) -> 
 async def async_unload_entry(hass: HomeAssistant, entry: SolixBLEConfigEntry) -> bool:
     """Unload a config entry."""
 
-    unload_ok = await hass.config_entries.async_forward_entry_unload(
+    unload_ok_sensor = await hass.config_entries.async_forward_entry_unload(
         entry, Platform.SENSOR
+    )
+    unload_ok_switch = await hass.config_entries.async_forward_entry_unload(
+        entry, Platform.SWITCH
     )
 
     await entry.runtime_data.disconnect()
 
-    return unload_ok
+    return unload_ok_sensor and unload_ok_switch

@@ -105,6 +105,13 @@ MOCK_C300X_DETAILS = MockDeviceDetails(
     model_class=Models.C300,
 )
 
+MOCK_C300DC_DETAILS = MockDeviceDetails(
+    name="Anker SOLIX C300X DC",
+    addr="AA:BB:CC:DD:EE:01",
+    model_string="C300(X) DC",
+    model_class=Models.C300DC,
+)
+
 MOCK_C1000_DETAILS = MockDeviceDetails(
     name="Anker SOLIX C1000",
     addr="AA:BB:CC:DD:EE:02",
@@ -117,6 +124,27 @@ MOCK_C1000X_DETAILS = MockDeviceDetails(
     addr="AA:BB:CC:DD:EE:03",
     model_string="C1000(X)",
     model_class=Models.C1000,
+)
+
+MOCK_C1000G2_DETAILS = MockDeviceDetails(
+    name="Anker SOLIX C1000 Gen 2",
+    addr="AA:BB:CC:DD:EE:03",
+    model_string="C1000(X) Gen 2",
+    model_class=Models.C1000G2,
+)
+
+MOCK_F2000_DETAILS = MockDeviceDetails(
+    name="Anker SOLIX F2000",
+    addr="AA:BB:CC:DD:EE:03",
+    model_string="F2000 (767)",
+    model_class=Models.F2000,
+)
+
+MOCK_F3800_DETAILS = MockDeviceDetails(
+    name="Anker SOLIX F3800",
+    addr="AA:BB:CC:DD:EE:03",
+    model_string="F3800",
+    model_class=Models.F3800,
 )
 
 MOCK_UNKNOWN_DETAILS = MockDeviceDetails(
@@ -146,13 +174,15 @@ MOCK_C300_TEST_DATA = {
     "solar_power_in": 10,
     "power_in": ("total_power_in", 11),
     "power_out": ("total_power_out", 12),
-    "solar_port": ("status_solar", PortStatus.INPUT),
+    # TODO: Solar port is broken in underlying library
+    # "solar_port": ("status_solar", PortStatus.INPUT),
     "battery_percentage": 13,
     "usb_port_c1": ("status_usb_c1", PortStatus.OUTPUT),
     "usb_port_c2": ("status_usb_c2", PortStatus.NOT_CONNECTED),
     "usb_port_c3": ("status_usb_c3", PortStatus.INPUT),
     "usb_port_a1": ("status_usb_a1", PortStatus.OUTPUT),
-    "dc_port": ("status_dc_out", PortStatus.OUTPUT),
+    "dc_output": ("status_dc_out", PortStatus.OUTPUT),
+    "ac_output": ("status_ac_out", PortStatus.NOT_CONNECTED),
     "light": ("status_light", LightStatus.HIGH),
 }
 
@@ -174,7 +204,9 @@ MOCK_C1000_TEST_DATA = {
     "solar_power_in": 10,
     "power_in": ("total_power_in", 11),
     "power_out": ("total_power_out", 12),
-    "solar_port": ("status_solar", PortStatus.INPUT),
+    # TODO: Solar port is broken in underlying library
+    # "solar_port": ("status_solar", PortStatus.INPUT),
+    "ac_output": ("status_ac_out", PortStatus.NOT_CONNECTED),
     "battery_percentage": 13,
 }
 
