@@ -1,24 +1,40 @@
 # Home Assistant Solix BLE
 
-Home Assistant integration which allows for the monitoring of Anker Solix devices using a Bluetooth connection.
+Home Assistant integration for monitoring and controlling Anker Solix devices using a Bluetooth connection.
 
 ## Features
 
 - 🔋 Battery percentage
 - ⚡ Total Power In/Out
+- 🎛️ AC/DC output control
 - 🔌 AC Power In/Out
 - 🚗 DC Power In/Out
 - ⏰ AC/DC Timer value
 - ⏲️ Time remaining to full/empty
 - ☀️ Solar Power In
+- 💻 USB Port Power
 - 📱 USB Port Status
+- ⚙️ Firmware version
+- 🩺 Battery health
+- 🌡️ Battery temperature
+- ↔️ Expansion batteries (Charge, Temperature, Health, Firmware)
 - 💡 Light bar status
+- 🖥️ Display status & control
+- ✔️ More emojis than strictly necessary
+
 
 ## Supported devices
 
+This lists the supported devices, more information on what features are supported can be found in the underlying libraries [documentation](https://solixble.readthedocs.io/en/latest/index.html).
+
 - C300(X)
+- C300(X) DC
 - C1000(X)
-- Maybe more? IDK
+- C1000(X) Gen 2
+- F2000
+- F3800
+- Anker Prime 250w Charger
+- Potentially more!
 
 ## Installation (HACS)
 
@@ -37,20 +53,9 @@ Home Assistant integration which allows for the monitoring of Anker Solix device
 
 ## Limitations
 
-- This integration can only monitor the power station, it cannot control it (i.e turn things on and off).
 - It is not possible to use Bluetooth and Wi-Fi at the same time.
 
-I ran into some issues connecting a C1000 power station with the default configuration for ESP32 Bluetooth proxies, though my C300 worked fine. The following configuration fixed it:
-
-```yaml
-bluetooth_proxy:
-  cache_services: false
-
-esp32_ble_tracker:
-  scan_parameters:
-    active: true
-```
 
 ## Adding support for new devices
 
-Support for new devices can be added by setting up this integration with an unsupported device and enabling debug logging, this causes the raw telemetry data and differences between values between updates to be printed to the debug log, this can be used to determine what bytes mean what by turning things on and off and finding what value change corresponds with that in the log. You are welcome to submit a PR to the underlying library [SolixBLE](https://github.com/flip-dots/SolixBLE) to add support or to raise a GitHub issue with all of the indexes of the values and what they correspond to and I am happy to add support myself.
+Support for new devices can be added by setting up this integration with an unsupported device and enabling debug logging, this causes the raw telemetry data and differences between values between updates to be printed to the debug log, this can be used to determine what bytes mean what by turning things on and off and finding what value change corresponds with that in the log. You are welcome to submit a PR to the underlying library [SolixBLE](https://github.com/flip-dots/SolixBLE) to add support or to raise a GitHub issue with all of the indexes of the values and what they correspond to and I am happy to add support myself. See the underlying libraries [docs](https://solixble.readthedocs.io/en/latest/new_devices.html), this [PR](https://github.com/flip-dots/SolixBLE/pull/8), and this [discussion](https://github.com/thomluther/anker-solix-api/discussions/222) for more information on how to go about decoding different properties.
