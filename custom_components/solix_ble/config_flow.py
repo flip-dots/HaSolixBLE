@@ -5,10 +5,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from SolixBLE import Generic, C300, C1000
-from . import get_power_station_class
 import voluptuous as vol
-
 from homeassistant.components import bluetooth
 from homeassistant.components.bluetooth.api import (
     async_ble_device_from_address,
@@ -19,7 +16,9 @@ from homeassistant.const import CONF_MAC, CONF_NAME
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import device_registry, selector
+from SolixBLE import Generic
 
+from . import get_power_station_class
 from .const import DOMAIN, Models
 
 _LOGGER = logging.getLogger(__name__)
@@ -48,11 +47,13 @@ async def validate_input(hass: HomeAssistant, address: str, model: Models) -> No
 
     device = PowerStationClass(ble_device)
     try:
-        if not await device.connect():
+        await device.connect()
+
+        if not device.connected:
             raise CannotConnect
 
-        if not device.available:
-            raise CannotSubscribe
+        if not device.negotiated:
+            raise CannotNegotiate
     finally:
         await device.disconnect()
 
@@ -105,8 +106,8 @@ class SolixBLEConfigFlow(ConfigFlow, domain=DOMAIN):
 
             except CannotConnect:
                 errors["base"] = "cannot_connect"
-            except CannotSubscribe:
-                errors["base"] = "cannot_subscribe"
+            except CannotNegotiate:
+                errors["base"] = "cannot_negotiate"
             except ScannerNotAvailable:
                 errors["base"] = "no_scanners"
             except NotFound:
@@ -116,7 +117,7 @@ class SolixBLEConfigFlow(ConfigFlow, domain=DOMAIN):
                 errors["base"] = "unknown"
             else:
                 return self.async_create_entry(
-                    title=self._discovery_info.name, data={"model": model}
+                    title=self._discovery_info.name, data={"model": model.value}
                 )
 
         return self.async_show_form(
@@ -143,8 +144,8 @@ class CannotConnect(HomeAssistantError):
     """Error to indicate we cannot connect."""
 
 
-class CannotSubscribe(HomeAssistantError):
-    """Error to indicate we cannot get telemetry."""
+class CannotNegotiate(HomeAssistantError):
+    """Error to indicate we failed to negotiate encryption schemes."""
 
 
 class ScannerNotAvailable(HomeAssistantError):

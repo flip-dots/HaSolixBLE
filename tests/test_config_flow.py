@@ -14,9 +14,13 @@ from custom_components.solix_ble.const import DOMAIN
 
 from . import (
     MOCK_C300_DETAILS,
+    MOCK_C300DC_DETAILS,
     MOCK_C300X_DETAILS,
     MOCK_C1000_DETAILS,
+    MOCK_C1000G2_DETAILS,
     MOCK_C1000X_DETAILS,
+    MOCK_F2000_DETAILS,
+    MOCK_F3800_DETAILS,
     MOCK_UNKNOWN_DETAILS,
     BLEDevice,
     MockDeviceDetails,
@@ -29,11 +33,25 @@ from .conftest import MockConfigEntry
     [
         MOCK_C300_DETAILS,
         MOCK_C300X_DETAILS,
+        MOCK_C300DC_DETAILS,
         MOCK_C1000_DETAILS,
         MOCK_C1000X_DETAILS,
+        MOCK_C1000G2_DETAILS,
+        MOCK_F2000_DETAILS,
+        MOCK_F3800_DETAILS,
         MOCK_UNKNOWN_DETAILS,
     ],
-    ids=["c300", "c300x", "c1000", "c1000x", "unknown"],
+    ids=[
+        "c300",
+        "c300x",
+        "c300dc",
+        "c1000",
+        "c1000x",
+        "c1000g2",
+        "f2000",
+        "f3800",
+        "unknown",
+    ],
 )
 async def test_bluetooth_form(
     hass: HomeAssistant,
@@ -68,7 +86,11 @@ async def test_bluetooth_form(
             side_effect=[True],
         ),
         patch(
-            "SolixBLE.SolixBLEDevice.available",
+            "SolixBLE.SolixBLEDevice.connected",
+            side_effect=[True],
+        ),
+        patch(
+            "SolixBLE.SolixBLEDevice.negotiated",
             side_effect=[True],
         ),
     ):
@@ -82,21 +104,22 @@ async def test_bluetooth_form(
     assert result["result"].unique_id == device_registry.format_mac(
         mock_device_details.addr
     )
-    assert result["result"].data == {"model": mock_device_details.model_class}
+    assert result["result"].data == {"model": mock_device_details.model_class.value}
 
     assert len(mock_setup_entry.mock_calls) == 1
 
 
 @pytest.mark.parametrize(
-    "mock_device_details,ble_device,scanner_count,connect,available,error",
+    "mock_device_details,ble_device,scanner_count,connect,connected,negotiated,error",
     [
         pytest.param(
-            MOCK_C300_DETAILS, None, 1, True, True, "not_found", id="not_found"
+            MOCK_C300_DETAILS, None, 1, True, True, True, "not_found", id="not_found"
         ),
         pytest.param(
             MOCK_C300_DETAILS,
             None,
             0,
+            True,
             True,
             True,
             "no_scanners",
@@ -106,16 +129,8 @@ async def test_bluetooth_form(
             MOCK_C300_DETAILS,
             MOCK_C300_DETAILS.get_ble_device(),
             1,
-            False,
-            True,
-            "cannot_connect",
-            id="connect_false",
-        ),
-        pytest.param(
-            MOCK_C300_DETAILS,
-            MOCK_C300_DETAILS.get_ble_device(),
-            1,
             Exception("Something bad!"),
+            True,
             True,
             "unknown",
             id="connect_exception",
@@ -126,8 +141,19 @@ async def test_bluetooth_form(
             1,
             True,
             False,
-            "cannot_subscribe",
-            id="available_false",
+            True,
+            "cannot_connect",
+            id="connected_false",
+        ),
+        pytest.param(
+            MOCK_C300_DETAILS,
+            MOCK_C300_DETAILS.get_ble_device(),
+            1,
+            True,
+            True,
+            False,
+            "cannot_negotiate",
+            id="negotiated_false",
         ),
     ],
 )
@@ -138,7 +164,8 @@ async def test_bluetooth_form_error(
     ble_device: BLEDevice,
     scanner_count: int,
     connect: Union[bool, Exception],
-    available: bool,
+    connected: bool,
+    negotiated: bool,
     error: str,
 ) -> None:
     """Test bluetooth discovery form when the is a problem."""
@@ -170,9 +197,14 @@ async def test_bluetooth_form_error(
             side_effect=[connect],
         ),
         patch(
-            "SolixBLE.SolixBLEDevice.available",
+            "SolixBLE.SolixBLEDevice.connected",
             new_callable=PropertyMock,
-            return_value=available,
+            return_value=connected,
+        ),
+        patch(
+            "SolixBLE.SolixBLEDevice.negotiated",
+            new_callable=PropertyMock,
+            return_value=negotiated,
         ),
     ):
         result = await hass.config_entries.flow.async_configure(
@@ -199,7 +231,11 @@ async def test_bluetooth_form_error(
             side_effect=[True],
         ),
         patch(
-            "SolixBLE.SolixBLEDevice.available",
+            "SolixBLE.SolixBLEDevice.connected",
+            side_effect=[True],
+        ),
+        patch(
+            "SolixBLE.SolixBLEDevice.negotiated",
             side_effect=[True],
         ),
     ):
@@ -213,7 +249,7 @@ async def test_bluetooth_form_error(
     assert result["result"].unique_id == device_registry.format_mac(
         mock_device_details.addr
     )
-    assert result["result"].data == {"model": mock_device_details.model_class}
+    assert result["result"].data == {"model": mock_device_details.model_class.value}
 
     assert len(mock_setup_entry.mock_calls) == 1
 

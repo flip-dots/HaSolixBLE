@@ -17,8 +17,12 @@ from custom_components.solix_ble.const import DOMAIN
 from . import (
     MOCK_C300_DETAILS,
     MOCK_C300_TEST_DATA,
+    MOCK_C300DC_DETAILS,
     MOCK_C1000_DETAILS,
     MOCK_C1000_TEST_DATA,
+    MOCK_C1000G2_DETAILS,
+    MOCK_F2000_DETAILS,
+    MOCK_F3800_DETAILS,
     MOCK_UNKNOWN_DETAILS,
     MOCK_UNKNOWN_TEST_DATA,
     MockDeviceDetails,
@@ -32,11 +36,35 @@ from . import (
             MOCK_C300_DETAILS, MOCK_C300_DETAILS, "C300", MOCK_C300_TEST_DATA, id="c300"
         ),
         pytest.param(
+            MOCK_C300DC_DETAILS, MOCK_C300DC_DETAILS, "C300DC", {}, id="c300dc"
+        ),
+        pytest.param(
             MOCK_C1000_DETAILS,
             MOCK_C1000_DETAILS,
             "C1000",
             MOCK_C1000_TEST_DATA,
             id="c1000",
+        ),
+        pytest.param(
+            MOCK_C1000G2_DETAILS,
+            MOCK_C1000G2_DETAILS,
+            "C1000G2",
+            {"temperature": 27},
+            id="c1000G2",
+        ),
+        pytest.param(
+            MOCK_F2000_DETAILS,
+            MOCK_F2000_DETAILS,
+            "F2000",
+            {},
+            id="f2000",
+        ),
+        pytest.param(
+            MOCK_F3800_DETAILS,
+            MOCK_F3800_DETAILS,
+            "F3800",
+            {},
+            id="f3800",
         ),
         pytest.param(
             MOCK_UNKNOWN_DETAILS,
@@ -72,7 +100,15 @@ async def test_sensor_entities(
             side_effect=[True],
         ),
         patch(
-            f"SolixBLE.{class_name}.available",
+            f"SolixBLE.{class_name}.connected",
+            side_effect=[True],
+        ),
+        patch(
+            f"SolixBLE.{class_name}.negotiated",
+            side_effect=[True],
+        ),
+        patch(
+            "SolixBLE.SolixBLEDevice.available",
             side_effect=[True],
         ),
         ExitStack() as dynamic_context,
