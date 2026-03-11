@@ -40,6 +40,7 @@ from .conftest import MockConfigEntry
         pytest.param(MOCK_C1000G2_DETAILS, MOCK_C1000G2_DETAILS, id="c1000g2"),
         pytest.param(MOCK_F2000_DETAILS, MOCK_F2000_DETAILS, id="f2000"),
         pytest.param(MOCK_F3800_DETAILS, MOCK_F3800_DETAILS, id="f3800"),
+        pytest.param(MOCK_UNKNOWN_DETAILS, MOCK_UNKNOWN_DETAILS, id="unknown"),
     ],
     indirect=["mock_config_entry"],
 )
