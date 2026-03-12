@@ -112,6 +112,13 @@ MOCK_C300DC_DETAILS = MockDeviceDetails(
     model_class=Models.C300DC,
 )
 
+MOCK_C800_DETAILS = MockDeviceDetails(
+    name="Anker SOLIX C800",
+    addr="AA:BB:CC:DD:EE:08",
+    model_string="C800(X)",
+    model_class=Models.C800,
+)
+
 MOCK_C1000_DETAILS = MockDeviceDetails(
     name="Anker SOLIX C1000",
     addr="AA:BB:CC:DD:EE:02",
@@ -184,6 +191,30 @@ MOCK_C300_TEST_DATA = {
     "dc_output": ("status_dc_out", PortStatus.OUTPUT),
     "ac_output": ("status_ac_out", PortStatus.NOT_CONNECTED),
     "light": ("status_light", LightStatus.HIGH),
+}
+
+# Sometimes the method name we are patching and the
+# entity ID do not line up, so a tuple is used to
+# manually specify it.
+MOCK_C800_TEST_DATA = {
+    "ac_timer": datetime.now(UTC),
+    "hours_remaining": ("remaining_hours", 5),
+    "days_remaining": ("remaining_days", 6),
+    "time_remaining": ("remaining_time", 12),
+    "timestamp_remaining": datetime.now(UTC),
+    "ac_power_in": 89,
+    "ac_power_out": 45,
+    "usb_c1_power": 99,
+    "usb_c2_power": 7,
+    "usb_a1_power": 5,
+    "usb_a2_power": 12,
+    "solar_power_in": 0,
+    "power_in": ("total_power_in", 89),
+    "power_out": ("total_power_out", 102),
+    # TODO: Solar port is broken in underlying library
+    # "solar_port": ("status_solar", PortStatus.INPUT),
+    "ac_output": ("status_ac_out", PortStatus.OUTPUT),
+    "battery_percentage": 100,
 }
 
 # Sometimes the method name we are patching and the

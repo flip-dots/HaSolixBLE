@@ -10,7 +10,17 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
-from SolixBLE import C300, C300DC, C1000, C1000G2, F2000, F3800, Generic, SolixBLEDevice
+from SolixBLE import (
+    C300,
+    C300DC,
+    C800,
+    C1000,
+    C1000G2,
+    F2000,
+    F3800,
+    Generic,
+    SolixBLEDevice,
+)
 
 from .const import Models
 
@@ -26,6 +36,8 @@ def get_power_station_class(model: Models) -> SolixBLEDevice:
         return C300
     elif model is Models.C300DC:
         return C300DC
+    elif model is Models.C800:
+        return C800
     elif model is Models.C1000:
         return C1000
     elif model is Models.C1000G2:

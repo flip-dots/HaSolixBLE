@@ -30,6 +30,7 @@ LIGHT_STATUS_STRINGS = ["Unknown", "Off", "Low", "Medium", "High"]
 class Models(Enum):
     C300 = "C300(X)"
     C300DC = "C300(X) DC"
+    C800 = "C800(X)"
     C1000 = "C1000(X)"
     C1000G2 = "C1000(X) Gen 2"
     F2000 = "F2000 (767)"

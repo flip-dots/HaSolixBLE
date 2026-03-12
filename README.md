@@ -29,6 +29,7 @@ This lists the supported devices, more information on what features are supporte
 
 - C300(X)
 - C300(X) DC
+- C800(X)
 - C1000(X)
 - C1000(X) Gen 2
 - F2000
