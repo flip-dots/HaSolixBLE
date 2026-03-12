@@ -116,4 +116,6 @@ async def async_unload_entry(hass: HomeAssistant, entry: SolixBLEConfigEntry) ->
 
     await entry.runtime_data.disconnect()
 
+    entry.runtime_data = None
+
     return unload_ok_sensor and unload_ok_switch
