@@ -23,7 +23,12 @@ from sqlalchemy import union
 
 from custom_components.solix_ble.const import DOMAIN
 
-from . import MOCK_C300_DETAILS, MOCK_C1000_DETAILS, MockDeviceDetails
+from . import (
+    MOCK_C300_DETAILS,
+    MOCK_C800_DETAILS,
+    MOCK_C1000_DETAILS,
+    MockDeviceDetails,
+)
 
 
 @pytest.mark.parametrize(
@@ -61,6 +66,39 @@ from . import MOCK_C300_DETAILS, MOCK_C1000_DETAILS, MockDeviceDetails
             "turn_display_off",
             None,
             id="c300_display",
+        ),
+        pytest.param(
+            MOCK_C800_DETAILS,
+            MOCK_C800_DETAILS,
+            "C800",
+            "ac_output",
+            "ac_output",
+            "turn_ac_on",
+            "turn_ac_off",
+            (PortStatus.NOT_CONNECTED, PortStatus.OUTPUT, PortStatus.NOT_CONNECTED),
+            id="c800_ac",
+        ),
+        pytest.param(
+            MOCK_C800_DETAILS,
+            MOCK_C800_DETAILS,
+            "C800",
+            "dc_output",
+            None,
+            "turn_dc_on",
+            "turn_dc_off",
+            (PortStatus.NOT_CONNECTED, PortStatus.OUTPUT, PortStatus.NOT_CONNECTED),
+            id="c800_dc",
+        ),
+        pytest.param(
+            MOCK_C800_DETAILS,
+            MOCK_C800_DETAILS,
+            "C800",
+            "display",
+            None,
+            "turn_display_on",
+            "turn_display_off",
+            None,
+            id="c800_display",
         ),
         pytest.param(
             MOCK_C1000_DETAILS,

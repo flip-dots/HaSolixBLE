@@ -9,7 +9,7 @@ from homeassistant.components.switch import SwitchEntity
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import CONNECTION_BLUETOOTH, DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from SolixBLE import C300, C1000, PortStatus, SolixBLEDevice
+from SolixBLE import C300, C800, C1000, PortStatus, SolixBLEDevice
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -28,31 +28,21 @@ async def async_setup_entry(
     device = config_entry.runtime_data
     switches: list[SolixSwitchEntity] = []
 
-    # Common switches
-    if type(device) in [C300, C1000]:
-        switches.extend(
-            [
-                SolixSwitchEntity(
-                    device,
-                    "AC Output",
-                    "ac_output",
-                    "ac_output",
-                    "turn_ac_on",
-                    "turn_ac_off",
-                ),
-                SolixSwitchEntity(
-                    device,
-                    "Display",
-                    "display_on_off",
-                    None,
-                    "turn_display_on",
-                    "turn_display_off",
-                ),
-            ]
+    # Support for AC output switch with status
+    if type(device) in [C300, C800, C1000]:
+        switches.append(
+            SolixSwitchEntity(
+                device,
+                "AC Output",
+                "ac_output",
+                "ac_output",
+                "turn_ac_on",
+                "turn_ac_off",
+            )
         )
 
-    # C300 only switches
-    if type(device) is C300:
+    # Support for DC output switch with status
+    if type(device) in [C300]:
         switches.append(
             SolixSwitchEntity(
                 device,
@@ -64,8 +54,8 @@ async def async_setup_entry(
             ),
         )
 
-    # C1000 only switches
-    if type(device) is C1000:
+    # Support for DC output switch without status
+    if type(device) in [C800, C1000]:
         switches.append(
             SolixSwitchEntity(
                 device,
@@ -74,6 +64,19 @@ async def async_setup_entry(
                 None,
                 "turn_dc_on",
                 "turn_dc_off",
+            ),
+        )
+
+    # Support for display on/off switch without status
+    if type(device) in [C300, C800, C1000]:
+        switches.append(
+            SolixSwitchEntity(
+                device,
+                "Display",
+                "display_on_off",
+                None,
+                "turn_display_on",
+                "turn_display_off",
             ),
         )
 

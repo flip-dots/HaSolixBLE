@@ -18,6 +18,8 @@ from . import (
     MOCK_C300_DETAILS,
     MOCK_C300_TEST_DATA,
     MOCK_C300DC_DETAILS,
+    MOCK_C800_DETAILS,
+    MOCK_C800_TEST_DATA,
     MOCK_C1000_DETAILS,
     MOCK_C1000_TEST_DATA,
     MOCK_C1000G2_DETAILS,
@@ -37,6 +39,9 @@ from . import (
         ),
         pytest.param(
             MOCK_C300DC_DETAILS, MOCK_C300DC_DETAILS, "C300DC", {}, id="c300dc"
+        ),
+        pytest.param(
+            MOCK_C800_DETAILS, MOCK_C800_DETAILS, "C800", MOCK_C800_TEST_DATA, id="c800"
         ),
         pytest.param(
             MOCK_C1000_DETAILS,
