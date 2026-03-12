@@ -8,6 +8,7 @@
             "cannot_negotiate": "Failed to negotiate encryption, is the device too far?.",
             "no_scanners": "No Bluetooth scanners are available to search for the device.",
             "not_found": "The device was not found.",
+            "not_implemented": "This integration can only be setup via Bluetooth discovery. No devices have been found.",
             "unknown": "Unexpected error"
         },
         "step": {
