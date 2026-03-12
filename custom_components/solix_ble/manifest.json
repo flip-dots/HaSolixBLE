@@ -14,7 +14,7 @@
     "integration_type": "device",
     "iot_class": "local_push",
     "issue_tracker": "https://github.com/flip-dots/HaSolixBLE/issues",
-    "requirements": ["SolixBLE==3.4.0"],
+    "requirements": ["SolixBLE@git+https://github.com/flip-dots/SolixBLE@bad3f2aa1ee136c6c6ba804c261b893255960d58"],
     "loggers": ["bleak", "SolixBLE"],
     "version": "3.2.0"
 }
