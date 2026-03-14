@@ -37,15 +37,15 @@ async def validate_input(hass: HomeAssistant, address: str, model: Models) -> No
             raise ScannerNotAvailable
         raise NotFound
 
-    PowerStationClass = get_power_station_class(model)
-    if PowerStationClass is Generic:
+    DeviceClass = get_power_station_class(model)
+    if DeviceClass is Generic:
         _LOGGER.warning(
             f"The device '{ble_device.name}' is not supported and values will not be available to Home Assistant! "
             f"However when the integration is in debug mode the raw telemetry data and differences between status "
             f"updates will be printed in the log and this can be used to aid in adding support for new devices."
         )
 
-    device = PowerStationClass(ble_device)
+    device = DeviceClass(ble_device)
     try:
         await device.connect()
 
