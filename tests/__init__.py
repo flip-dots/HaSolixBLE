@@ -154,6 +154,20 @@ MOCK_F3800_DETAILS = MockDeviceDetails(
     model_class=Models.F3800,
 )
 
+MOCK_PRIME_160_DETAILS = MockDeviceDetails(
+    name="Anker Prime 160w Charger",
+    addr="AA:BB:CC:DD:00:00",
+    model_string="Prime Charger (160w)",
+    model_class=Models.PRIME_CHARGER_160,
+)
+
+MOCK_PRIME_250_DETAILS = MockDeviceDetails(
+    name="Anker Prime 250w Charger",
+    addr="AA:BB:CC:DD:00:01",
+    model_string="Prime Charger (250w)",
+    model_class=Models.PRIME_CHARGER_250,
+)
+
 MOCK_UNKNOWN_DETAILS = MockDeviceDetails(
     name="Anker SOLIX IDK",
     addr="AA:BB:CC:DD:EE:04",
@@ -239,6 +253,54 @@ MOCK_C1000_TEST_DATA = {
     # "solar_port": ("status_solar", PortStatus.INPUT),
     "ac_output": ("status_ac_out", PortStatus.NOT_CONNECTED),
     "battery_percentage": 13,
+}
+
+# Sometimes the method name we are patching and the
+# entity ID do not line up, so a tuple is used to
+# manually specify it
+MOCK_PRIME_160_TEST_DATA = {
+    "usb_c1_power": 5.0,
+    "usb_c2_power": 0.0,
+    "usb_c3_power": 7.67,
+    "usb_c1_current": 4.99,
+    "usb_c2_current": 0.0,
+    "usb_c3_current": 5.3,
+    "usb_c1_voltage": 24.5,
+    "usb_c2_voltage": 0.0,
+    "usb_c3_voltage": 24.4,
+    "usb_port_c1": ("status_usb_c1", PortStatus.OUTPUT),
+    "usb_port_c2": ("status_usb_c2", PortStatus.NOT_CONNECTED),
+    "usb_port_c3": ("status_usb_c3", PortStatus.OUTPUT),
+}
+
+# Sometimes the method name we are patching and the
+# entity ID do not line up, so a tuple is used to
+# manually specify it
+MOCK_PRIME_250_TEST_DATA = {
+    "usb_c1_power": 0.0,
+    "usb_c2_power": 24.5,
+    "usb_c3_power": 120.4,
+    "usb_c4_power": 12.2,
+    "usb_a1_power": 8.65,
+    "usb_a2_power": 0.0,
+    "usb_c1_current": 0.0,
+    "usb_c2_current": 2.9,
+    "usb_c3_current": 5.3,
+    "usb_c4_current": 1.0,
+    "usb_a1_current": 0.1,
+    "usb_a2_current": 0.0,
+    "usb_c1_voltage": 0.0,
+    "usb_c2_voltage": 2.5,
+    "usb_c3_voltage": 24.4,
+    "usb_c4_voltage": 20.0,
+    "usb_a1_voltage": 4.65,
+    "usb_a2_voltage": 5.11,
+    "usb_port_c1": ("status_usb_c1", PortStatus.NOT_CONNECTED),
+    "usb_port_c2": ("status_usb_c2", PortStatus.OUTPUT),
+    "usb_port_c3": ("status_usb_c3", PortStatus.OUTPUT),
+    "usb_port_c4": ("status_usb_c4", PortStatus.OUTPUT),
+    "usb_port_a1": ("status_usb_a1", PortStatus.OUTPUT),
+    "usb_port_a2": ("status_usb_a2", PortStatus.NOT_CONNECTED),
 }
 
 MOCK_UNKNOWN_TEST_DATA = {}
