@@ -19,6 +19,8 @@ from SolixBLE import (
     F2000,
     F3800,
     Generic,
+    PrimeCharger160w,
+    PrimeCharger250w,
     SolixBLEDevice,
 )
 
@@ -46,6 +48,10 @@ def get_power_station_class(model: Models) -> SolixBLEDevice:
         return F2000
     elif model is Models.F3800:
         return F3800
+    elif model is Models.PRIME_CHARGER_160:
+        return PrimeCharger160w
+    elif model is Models.PRIME_CHARGER_250:
+        return PrimeCharger250w
     elif model is Models.UNKNOWN:
         return Generic
     else:
@@ -71,7 +77,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: SolixBLEConfigEntry) -> 
             )
         raise ConfigEntryNotReady("The device was not found.")
 
-    PowerStationClass = get_power_station_class(model)
+    DeviceClass = get_power_station_class(model)
     if model is Models.UNKNOWN:
         _LOGGER.warning(
             f"The device '{ble_device.name}' is not supported and values will not be available to Home Assistant! "
@@ -79,7 +85,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: SolixBLEConfigEntry) -> 
             f"updates will be printed in the log and this can be used to aid in adding support for new devices."
         )
 
-    device = PowerStationClass(ble_device)
+    device = DeviceClass(ble_device)
     try:
         await device.connect()
     except Exception as e:
@@ -115,5 +121,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: SolixBLEConfigEntry) ->
     )
 
     await entry.runtime_data.disconnect()
+
+    entry.runtime_data = None
 
     return unload_ok_sensor and unload_ok_switch

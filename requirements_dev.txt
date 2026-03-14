@@ -4,4 +4,4 @@ pytest-homeassistant-custom-component
 pyserial
 pytest-cov
 aiousbwatcher
-SolixBLE==3.4.0
+SolixBLE@git+https://github.com/flip-dots/SolixBLE@eb120c0329c128f03ab4e39ddcbaf20a8f8340a8

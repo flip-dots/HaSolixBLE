@@ -22,6 +22,8 @@ from . import (
     MOCK_C1000X_DETAILS,
     MOCK_F2000_DETAILS,
     MOCK_F3800_DETAILS,
+    MOCK_PRIME_160_DETAILS,
+    MOCK_PRIME_250_DETAILS,
     MOCK_UNKNOWN_DETAILS,
     BLEDevice,
     MockDeviceDetails,
@@ -41,6 +43,8 @@ from .conftest import MockConfigEntry
         MOCK_C1000G2_DETAILS,
         MOCK_F2000_DETAILS,
         MOCK_F3800_DETAILS,
+        MOCK_PRIME_160_DETAILS,
+        MOCK_PRIME_250_DETAILS,
         MOCK_UNKNOWN_DETAILS,
     ],
     ids=[
@@ -53,6 +57,8 @@ from .conftest import MockConfigEntry
         "c1000g2",
         "f2000",
         "f3800",
+        "prime_160w",
+        "prime_250w",
         "unknown",
     ],
 )

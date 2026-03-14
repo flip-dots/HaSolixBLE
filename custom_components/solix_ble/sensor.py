@@ -12,7 +12,18 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import CONNECTION_BLUETOOTH, DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.util.dt import as_local
-from SolixBLE import C300, C300DC, C800, C1000, C1000G2, F2000, F3800, SolixBLEDevice
+from SolixBLE import (
+    C300,
+    C300DC,
+    C800,
+    C1000,
+    C1000G2,
+    F2000,
+    F3800,
+    PrimeCharger160w,
+    PrimeCharger250w,
+    SolixBLEDevice,
+)
 
 from .const import (
     CHARGING_STATUS_C300_STRINGS,
@@ -274,7 +285,17 @@ async def async_setup_entry(
         )
 
     # USB C1 power out
-    if type(device) in [C300, C300DC, C800, C1000, C1000G2, F2000, F3800]:
+    if type(device) in [
+        C300,
+        C300DC,
+        C800,
+        C1000,
+        C1000G2,
+        F2000,
+        F3800,
+        PrimeCharger160w,
+        PrimeCharger250w,
+    ]:
         sensors.append(
             SolixSensorEntity(
                 device,
@@ -286,7 +307,17 @@ async def async_setup_entry(
         )
 
     # USB C2 power out
-    if type(device) in [C300, C300DC, C800, C1000, C1000G2, F2000, F3800]:
+    if type(device) in [
+        C300,
+        C300DC,
+        C800,
+        C1000,
+        C1000G2,
+        F2000,
+        F3800,
+        PrimeCharger160w,
+        PrimeCharger250w,
+    ]:
         sensors.append(
             SolixSensorEntity(
                 device,
@@ -298,7 +329,15 @@ async def async_setup_entry(
         )
 
     # USB C3 power out
-    if type(device) in [C300, C300DC, C1000G2, F2000, F3800]:
+    if type(device) in [
+        C300,
+        C300DC,
+        C1000G2,
+        F2000,
+        F3800,
+        PrimeCharger160w,
+        PrimeCharger250w,
+    ]:
         sensors.append(
             SolixSensorEntity(
                 device,
@@ -310,7 +349,7 @@ async def async_setup_entry(
         )
 
     # USB C4 power out
-    if type(device) in [C300DC]:
+    if type(device) in [C300DC, PrimeCharger250w]:
         sensors.append(
             SolixSensorEntity(
                 device,
@@ -322,7 +361,16 @@ async def async_setup_entry(
         )
 
     # USB A1 power out
-    if type(device) in [C300, C300DC, C800, C1000, C1000G2, F2000, F3800]:
+    if type(device) in [
+        C300,
+        C300DC,
+        C800,
+        C1000,
+        C1000G2,
+        F2000,
+        F3800,
+        PrimeCharger250w,
+    ]:
         sensors.append(
             SolixSensorEntity(
                 device,
@@ -334,7 +382,7 @@ async def async_setup_entry(
         )
 
     # USB A2 power out
-    if type(device) in [C300DC, C800, C1000, F2000, F3800]:
+    if type(device) in [C300DC, C800, C1000, F2000, F3800, PrimeCharger250w]:
         sensors.append(
             SolixSensorEntity(
                 device,
@@ -346,7 +394,14 @@ async def async_setup_entry(
         )
 
     # USB C1 status
-    if type(device) in [C300, C300DC, C1000G2, F3800]:
+    if type(device) in [
+        C300,
+        C300DC,
+        C1000G2,
+        F3800,
+        PrimeCharger160w,
+        PrimeCharger250w,
+    ]:
         sensors.append(
             SolixSensorEntity(
                 device,
@@ -360,7 +415,14 @@ async def async_setup_entry(
         )
 
     # USB C2 status
-    if type(device) in [C300, C300DC, C1000G2, F3800]:
+    if type(device) in [
+        C300,
+        C300DC,
+        C1000G2,
+        F3800,
+        PrimeCharger160w,
+        PrimeCharger250w,
+    ]:
         sensors.append(
             SolixSensorEntity(
                 device,
@@ -374,7 +436,14 @@ async def async_setup_entry(
         )
 
     # USB C3 status
-    if type(device) in [C300, C300DC, C1000G2, F3800]:
+    if type(device) in [
+        C300,
+        C300DC,
+        C1000G2,
+        F3800,
+        PrimeCharger160w,
+        PrimeCharger250w,
+    ]:
         sensors.append(
             SolixSensorEntity(
                 device,
@@ -388,7 +457,7 @@ async def async_setup_entry(
         )
 
     # USB C4 status
-    if type(device) in [C300DC]:
+    if type(device) in [C300DC, PrimeCharger250w]:
         sensors.append(
             SolixSensorEntity(
                 device,
@@ -402,7 +471,7 @@ async def async_setup_entry(
         )
 
     # USB A1 status
-    if type(device) in [C300, C300DC, C1000G2, F3800]:
+    if type(device) in [C300, C300DC, C1000G2, F3800, PrimeCharger250w]:
         sensors.append(
             SolixSensorEntity(
                 device,
@@ -416,7 +485,7 @@ async def async_setup_entry(
         )
 
     # USB A2 status
-    if type(device) in [C300DC, F3800]:
+    if type(device) in [C300DC, F3800, PrimeCharger250w]:
         sensors.append(
             SolixSensorEntity(
                 device,
@@ -426,6 +495,150 @@ async def async_setup_entry(
                 SensorDeviceClass.ENUM,
                 PORT_STATUS_STRINGS,
                 None,
+            )
+        )
+
+    # USB C1 voltage out
+    if type(device) in [PrimeCharger160w, PrimeCharger250w]:
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "USB C1 Voltage",
+                "V",
+                "usb_c1_voltage",
+                SensorDeviceClass.VOLTAGE,
+            )
+        )
+
+    # USB C2 voltage out
+    if type(device) in [PrimeCharger160w, PrimeCharger250w]:
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "USB C2 Voltage",
+                "V",
+                "usb_c2_voltage",
+                SensorDeviceClass.VOLTAGE,
+            )
+        )
+
+    # USB C3 voltage out
+    if type(device) in [PrimeCharger160w, PrimeCharger250w]:
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "USB C3 Voltage",
+                "V",
+                "usb_c3_voltage",
+                SensorDeviceClass.VOLTAGE,
+            )
+        )
+
+    # USB C4 voltage out
+    if type(device) in [PrimeCharger250w]:
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "USB C4 Voltage",
+                "V",
+                "usb_c4_voltage",
+                SensorDeviceClass.VOLTAGE,
+            )
+        )
+
+    # USB A1 voltage out
+    if type(device) in [PrimeCharger250w]:
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "USB A1 Voltage",
+                "V",
+                "usb_a1_voltage",
+                SensorDeviceClass.VOLTAGE,
+            )
+        )
+
+    # USB A2 voltage out
+    if type(device) in [PrimeCharger250w]:
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "USB A2 Voltage",
+                "V",
+                "usb_a2_voltage",
+                SensorDeviceClass.VOLTAGE,
+            )
+        )
+
+    # USB C1 current out
+    if type(device) in [PrimeCharger160w, PrimeCharger250w]:
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "USB C1 Current",
+                "A",
+                "usb_c1_current",
+                SensorDeviceClass.CURRENT,
+            )
+        )
+
+    # USB C2 current out
+    if type(device) in [PrimeCharger160w, PrimeCharger250w]:
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "USB C2 Current",
+                "A",
+                "usb_c2_current",
+                SensorDeviceClass.CURRENT,
+            )
+        )
+
+    # USB C3 current out
+    if type(device) in [PrimeCharger160w, PrimeCharger250w]:
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "USB C3 Current",
+                "A",
+                "usb_c3_current",
+                SensorDeviceClass.CURRENT,
+            )
+        )
+
+    # USB C4 current out
+    if type(device) in [PrimeCharger250w]:
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "USB C4 Current",
+                "A",
+                "usb_c4_current",
+                SensorDeviceClass.CURRENT,
+            )
+        )
+
+    # USB A1 current out
+    if type(device) in [PrimeCharger250w]:
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "USB A1 Current",
+                "A",
+                "usb_a1_current",
+                SensorDeviceClass.CURRENT,
+            )
+        )
+
+    # USB A2 current out
+    if type(device) in [PrimeCharger250w]:
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "USB A2 Current",
+                "A",
+                "usb_a2_current",
+                SensorDeviceClass.CURRENT,
             )
         )
 
