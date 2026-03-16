@@ -9,7 +9,7 @@ from homeassistant.components.switch import SwitchEntity
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import CONNECTION_BLUETOOTH, DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from SolixBLE import C300, C800, C1000, PortStatus, SolixBLEDevice
+from SolixBLE import C300, C800, C1000, PortStatus, PrimeCharger160w, SolixBLEDevice
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -77,6 +77,45 @@ async def async_setup_entry(
                 None,
                 "turn_display_on",
                 "turn_display_off",
+            ),
+        )
+
+    # Support for controlling USB Port C1
+    if type(device) in [PrimeCharger160w]:
+        switches.append(
+            SolixSwitchEntity(
+                device,
+                "USB Port C1",
+                "usb_port_c1",
+                "usb_port_c1",
+                "turn_usb_c1_on",
+                "turn_usb_c1_off",
+            ),
+        )
+
+    # Support for controlling USB Port C2
+    if type(device) in [PrimeCharger160w]:
+        switches.append(
+            SolixSwitchEntity(
+                device,
+                "USB Port C2",
+                "usb_port_c2",
+                "usb_port_c2",
+                "turn_usb_c2_on",
+                "turn_usb_c2_off",
+            ),
+        )
+
+    # Support for controlling USB Port C3
+    if type(device) in [PrimeCharger160w]:
+        switches.append(
+            SolixSwitchEntity(
+                device,
+                "USB Port C3",
+                "usb_port_c3",
+                "usb_port_c3",
+                "turn_usb_c3_on",
+                "turn_usb_c3_off",
             ),
         )
 
