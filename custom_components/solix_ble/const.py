@@ -35,4 +35,6 @@ class Models(Enum):
     C1000G2 = "C1000(X) Gen 2"
     F2000 = "F2000 (767)"
     F3800 = "F3800"
+    PRIME_CHARGER_160 = "Prime Charger (160w)"
+    PRIME_CHARGER_250 = "Prime Charger (250w)"
     UNKNOWN = "Unknown"
