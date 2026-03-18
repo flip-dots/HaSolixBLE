@@ -1,0 +1,7 @@
+
+[lint]
+select = ["ALL"]
+ignore = ["D202", "D212", "D213", "G004", "FURB171"]
+
+[per-file-ignores]
+"tests/*" = ["S101"]

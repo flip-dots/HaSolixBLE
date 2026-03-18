@@ -12,6 +12,7 @@
             "source.organizeImports": "explicit"
         },
     },
+    "ruff.lint.enable": true,
     "isort.args": [
         "--profile",
         "black"
