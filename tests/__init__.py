@@ -195,6 +195,40 @@ MOCK_C300_TEST_DATA = {
 
 # Sometimes the method name we are patching and the
 # entity ID do not line up, so a tuple is used to
+# manually specify it
+MOCK_C300DC_TEST_DATA = {
+    "dc_timer": datetime.now(UTC),
+    "hours_remaining": ("remaining_hours", 1),
+    "days_remaining": ("remaining_days", 2),
+    "time_remaining": ("remaining_time", 2.5),
+    "timestamp_remaining": datetime.now(UTC),
+    "usb_c1_power": 5,
+    "usb_c2_power": 6,
+    "usb_c3_power": 7,
+    "usb_c4_power": 8,
+    "usb_a1_power": 9,
+    "usb_a2_power": 10,
+    "dc_power_out": 11,
+    "solar_power_in": 12,
+    "power_in": ("total_power_in", 13),
+    "power_out": ("total_power_out", 14),
+    "solar_port": ("status_solar", PortStatus.INPUT),
+    "battery_percentage": 15,
+    "battery_health": 16,
+    "usb_port_c1": ("status_usb_c1", PortStatus.OUTPUT),
+    "usb_port_c2": ("status_usb_c2", PortStatus.NOT_CONNECTED),
+    "usb_port_c3": ("status_usb_c3", PortStatus.INPUT),
+    "usb_port_c4": ("status_usb_c4", PortStatus.NOT_CONNECTED),
+    "usb_port_a1": ("status_usb_a1", PortStatus.OUTPUT),
+    "usb_port_a2": ("status_usb_a2", PortStatus.NOT_CONNECTED),
+    "light": ("status_light", LightStatus.HIGH),
+    "display_mode": ("display_status", LightStatus.OFF),
+    "software_version": ("firmware_version", "0.0.17"),
+    "temperature": 18,
+}
+
+# Sometimes the method name we are patching and the
+# entity ID do not line up, so a tuple is used to
 # manually specify it.
 MOCK_C800_TEST_DATA = {
     "ac_timer": datetime.now(UTC),
