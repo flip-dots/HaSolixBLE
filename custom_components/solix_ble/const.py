@@ -8,14 +8,6 @@ PORT_STATUS_STRINGS = ["Unknown", "Not connected", "Output", "Input"]
 
 CHARGING_STATUS_C300_STRINGS = ["Unknown", "Idle", "Discharging", "Charging"]
 
-CHARGING_STATUS_C300DC_STRINGS = [
-    "Unknown",
-    "Idle",
-    "Charging (Solar)",
-    "Charging (DC)",
-    "Charging (Both)",
-]
-
 CHARGING_STATUS_F3800_STRINGS = [
     "Unknown",
     "Idle",
@@ -25,6 +17,8 @@ CHARGING_STATUS_F3800_STRINGS = [
 ]
 
 LIGHT_STATUS_STRINGS = ["Unknown", "Off", "Low", "Medium", "High"]
+
+OVERLOAD_STATUS_C300DC_STRINGS = ["Unknown", "None", "USB C1", "USB C2", "USB C3"]
 
 
 class Models(Enum):

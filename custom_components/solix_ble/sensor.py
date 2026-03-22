@@ -16,9 +16,9 @@ from SolixBLE import C300, C300DC, C800, C1000, C1000G2, F2000, F3800, SolixBLED
 
 from .const import (
     CHARGING_STATUS_C300_STRINGS,
-    CHARGING_STATUS_C300DC_STRINGS,
     CHARGING_STATUS_F3800_STRINGS,
     LIGHT_STATUS_STRINGS,
+    OVERLOAD_STATUS_C300DC_STRINGS,
     PORT_STATUS_STRINGS,
 )
 
@@ -40,7 +40,7 @@ async def async_setup_entry(
     sensors: list[SolixSensorEntity] = []
 
     # Charging status sensor
-    if type(device) in [C300]:
+    if type(device) in [C300, C300DC]:
         sensors.append(
             SolixSensorEntity(
                 device,
@@ -49,20 +49,6 @@ async def async_setup_entry(
                 "charging_status",
                 SensorDeviceClass.ENUM,
                 CHARGING_STATUS_C300_STRINGS,
-                None,
-            )
-        )
-
-    # Charging status sensor
-    if type(device) in [C300DC]:
-        sensors.append(
-            SolixSensorEntity(
-                device,
-                "Charging Status",
-                None,
-                "charging_status",
-                SensorDeviceClass.ENUM,
-                CHARGING_STATUS_C300DC_STRINGS,
                 None,
             )
         )
@@ -219,7 +205,7 @@ async def async_setup_entry(
         )
 
     # DC power out
-    if type(device) in [C300, C1000G2]:
+    if type(device) in [C300, C300DC, C1000G2]:
         sensors.append(
             SolixSensorEntity(
                 device,
@@ -231,19 +217,18 @@ async def async_setup_entry(
         )
 
     # DC/Solar power in status
-    # TODO: Fix when underlying library fixed
-    # if type(device) in [C300, C1000G2]:
-    # sensors.append(
-    #     SolixSensorEntity(
-    #         device,
-    #         "Status Solar",
-    #         None,
-    #         "solar_port",
-    #         SensorDeviceClass.ENUM,
-    #         PORT_STATUS_STRINGS,
-    #         None,
-    #     )
-    # )
+    if type(device) in [C300DC]:
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "Status Solar",
+                None,
+                "solar_port",
+                SensorDeviceClass.ENUM,
+                PORT_STATUS_STRINGS,
+                None,
+            )
+        )
 
     # DC power out status
     # TODO: Reenable for C1000 when underlying library fixes
@@ -261,7 +246,7 @@ async def async_setup_entry(
         )
 
     # DC Timer
-    if type(device) in [C300]:
+    if type(device) in [C300, C300DC]:
         sensors.append(
             SolixSensorEntity(
                 device,
@@ -429,8 +414,22 @@ async def async_setup_entry(
             )
         )
 
+    # Overload status
+    if type(device) in [C300DC]:
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "Overload Status",
+                None,
+                "device_overload",
+                SensorDeviceClass.ENUM,
+                OVERLOAD_STATUS_C300DC_STRINGS,
+                None,
+            )
+        )
+
     # Light status
-    if type(device) in [C300]:
+    if type(device) in [C300, C300DC]:
         sensors.append(
             SolixSensorEntity(
                 device,
@@ -443,8 +442,22 @@ async def async_setup_entry(
             )
         )
 
+    # Display status
+    if type(device) in [C300DC]:
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "Display Status",
+                None,
+                "display_mode",
+                SensorDeviceClass.ENUM,
+                LIGHT_STATUS_STRINGS,
+                None,
+            )
+        )
+
     # Firmware version
-    if type(device) in [C300, C800, C1000, F2000, F3800]:
+    if type(device) in [C300, C300DC, C800, C1000, F2000, F3800]:
         sensors.append(
             SolixSensorEntity(
                 device,
@@ -456,7 +469,7 @@ async def async_setup_entry(
         )
 
     # Serial number
-    if type(device) in [C300, C800, C1000, C1000G2, F2000, F3800]:
+    if type(device) in [C300, C300DC, C800, C1000, C1000G2, F2000, F3800]:
         sensors.append(
             SolixSensorEntity(
                 device,
