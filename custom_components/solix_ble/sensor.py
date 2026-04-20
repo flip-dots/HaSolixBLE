@@ -167,12 +167,12 @@ async def async_setup_entry(
             )
         )
 
-    # Battery discharged energy (energy out)
+    # Solarbank dispensed energy (energy out)
     if type(device) in [Solarbank2]:
         sensors.append(
             SolixSensorEntity(
                 device,
-                "Battery output energy",
+                "Total output energy",
                 "kWh",
                 "output_energy",
                 SensorDeviceClass.ENERGY,
