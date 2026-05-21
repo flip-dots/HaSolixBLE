@@ -367,7 +367,7 @@ MOCK_SOLAR_BANK_2_TEST_DATA = {
     "battery_charge_power": 0,
     "pv_yield": 1053.2,
     "charged_energy": ("battery_input_energy", 124.3),
-    "output_energy": ("battery_output_energy", 12.7),
+    "output_energy": ("total_output_energy", 12.7),
     "output_cutoff_data": ("output_cutoff_threshold", SBPowerCutoff.P5, "5%"),
     "input_cutoff_data": ("input_cutoff_threshold", SBPowerCutoff.P10, "10%"),
     "battery_discharge_power": 12.4,
