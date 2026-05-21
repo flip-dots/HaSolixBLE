@@ -102,5 +102,13 @@ class SolixSchedulePowerNumberEntity(NumberEntity, RestoreEntity):
 
     async def async_set_native_value(self, value: float) -> None:
         """Store the new value; do not write to the device until Apply is pressed."""
-        self._attr_native_value = value
+        # Solarbank 2-specific: We snap the native step (10 W) of the slider in the 
+        # original Anker app to avoid trouble.
+        # If future devices add Number entities, they should decide their own snapping policy.
+        step = self._attr_native_step
+        snapped = round(value / step) * step
+        self._attr_native_value = max(
+            self._attr_native_min_value,
+            min(self._attr_native_max_value, snapped),
+        )
         self.async_write_ha_state()
