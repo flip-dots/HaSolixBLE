@@ -51,7 +51,7 @@ def _enter_device_setup_patches(stack: ExitStack, class_name: str, mock_device_d
 
 
 NUMBER_ENTITY_ID = "number.solar_bank_2_output_power_target"
-BUTTON_ENTITY_ID = "button.solar_bank_2_apply"
+BUTTON_ENTITY_ID = "button.solar_bank_2_apply_power_target"
 
 
 @pytest.mark.parametrize(

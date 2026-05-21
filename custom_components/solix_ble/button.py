@@ -51,7 +51,7 @@ class SolixApplyScheduleButtonEntity(ButtonEntity):
         """Initialize the entity."""
         self._device = device
         self._number_unique_id = f"{device.address}_{SCHEDULE_POWER_UNIQUE_SUFFIX}"
-        self._attr_name = "Apply"
+        self._attr_name = "Apply Power Target"
         self._attr_unique_id = f"{device.address}_apply_schedule"
         self._attr_device_info = DeviceInfo(
             name=device.name,
