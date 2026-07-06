@@ -19,6 +19,7 @@ from SolixBLE import (
     F2000,
     F3800,
     Generic,
+    MagGo3in1,
     PrimeCharger160w,
     PrimeCharger250w,
     PrimePowerBank20k,
@@ -56,6 +57,8 @@ def get_power_station_class(model: Models) -> SolixBLEDevice:
         return PrimeCharger250w
     elif model is Models.PRIME_POWER_BANK_20K:
         return PrimePowerBank20k
+    elif model is Models.MAGGO_3IN1:
+        return MagGo3in1
     elif model is Models.SOLARBANK_2:
         return Solarbank2
     elif model is Models.UNKNOWN:

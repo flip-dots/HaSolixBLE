@@ -97,4 +97,5 @@ class Models(Enum):
     PRIME_CHARGER_250 = "Prime Charger (250w)"
     PRIME_POWER_BANK_20K = "Prime Power Bank 20k (220w)"
     SOLARBANK_2 = "Solarbank 2"
+    MAGGO_3IN1 = "MagGo 3-in-1 Wireless Charger (A25x7)"
     UNKNOWN = "Unknown"

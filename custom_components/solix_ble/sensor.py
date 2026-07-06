@@ -20,6 +20,7 @@ from SolixBLE import (
     C1000G2,
     F2000,
     F3800,
+    MagGo3in1,
     PrimeCharger160w,
     PrimeCharger250w,
     PrimePowerBank20k,
@@ -1118,6 +1119,29 @@ async def async_setup_entry(
                 None,
                 "battery_heating",
                 None,
+            )
+        )
+
+    # MagGo 3-in-1 wireless charger: per-pad power + total
+    if type(device) in [MagGo3in1]:
+        sensors.append(
+            SolixSensorEntity(
+                device, "Pad 1 Power", "W", "pad_1_power", SensorDeviceClass.POWER
+            )
+        )
+        sensors.append(
+            SolixSensorEntity(
+                device, "Pad 2 Power", "W", "pad_2_power", SensorDeviceClass.POWER
+            )
+        )
+        sensors.append(
+            SolixSensorEntity(
+                device, "Pad 3 Power", "W", "pad_3_power", SensorDeviceClass.POWER
+            )
+        )
+        sensors.append(
+            SolixSensorEntity(
+                device, "Total Power", "W", "total_power", SensorDeviceClass.POWER
             )
         )
 
