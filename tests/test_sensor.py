@@ -26,6 +26,8 @@ from . import (
     MOCK_C1000G2_DETAILS,
     MOCK_F2000_DETAILS,
     MOCK_F3800_DETAILS,
+    MOCK_MAGGO_3IN1_DETAILS,
+    MOCK_MAGGO_3IN1_TEST_DATA,
     MOCK_PRIME_160_DETAILS,
     MOCK_PRIME_160_TEST_DATA,
     MOCK_PRIME_250_DETAILS,
@@ -104,6 +106,13 @@ from . import (
             "PrimePowerBank20k",
             MOCK_PRIME_POWER_BANK_20K_TEST_DATA,
             id="prime_power_bank_20k",
+        ),
+        pytest.param(
+            MOCK_MAGGO_3IN1_DETAILS,
+            MOCK_MAGGO_3IN1_DETAILS,
+            "MagGo3in1",
+            MOCK_MAGGO_3IN1_TEST_DATA,
+            id="maggo_3in1",
         ),
         pytest.param(
             MOCK_SOLAR_BANK_2_DETAILS,

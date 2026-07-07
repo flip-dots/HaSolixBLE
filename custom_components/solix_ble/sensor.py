@@ -260,6 +260,7 @@ async def async_setup_entry(
         F3800,
         Solarbank2,
         PrimePowerBank20k,
+        MagGo3in1,
     ]:
         sensors.append(
             SolixSensorEntity(
@@ -1122,26 +1123,27 @@ async def async_setup_entry(
             )
         )
 
-    # MagGo 3-in-1 wireless charger: per-pad power + total
+    # Wireless charging pad 1 power out
     if type(device) in [MagGo3in1]:
         sensors.append(
             SolixSensorEntity(
                 device, "Pad 1 Power", "W", "pad_1_power", SensorDeviceClass.POWER
             )
         )
+
+    # Wireless charging pad 2 power out
+    if type(device) in [MagGo3in1]:
         sensors.append(
             SolixSensorEntity(
                 device, "Pad 2 Power", "W", "pad_2_power", SensorDeviceClass.POWER
             )
         )
+
+    # Wireless charging pad 3 power out
+    if type(device) in [MagGo3in1]:
         sensors.append(
             SolixSensorEntity(
                 device, "Pad 3 Power", "W", "pad_3_power", SensorDeviceClass.POWER
-            )
-        )
-        sensors.append(
-            SolixSensorEntity(
-                device, "Total Power", "W", "total_power", SensorDeviceClass.POWER
             )
         )
 
