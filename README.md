@@ -35,6 +35,7 @@ This lists the supported devices, more information on what features are supporte
 - F2000
 - F3800
 - Anker Prime 250w Charger
+- Solarbank 2
 - Potentially more!
 
 ## Installation (HACS)
