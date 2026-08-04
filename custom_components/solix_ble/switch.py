@@ -16,6 +16,7 @@ from SolixBLE import (
     C1000G2,
     PortStatus,
     PrimeCharger160w,
+    PrimeCharger250w,
     SolixBLEDevice,
 )
 
@@ -89,7 +90,7 @@ async def async_setup_entry(
         )
 
     # Support for controlling USB Port C1
-    if type(device) in [PrimeCharger160w]:
+    if type(device) in [PrimeCharger160w, PrimeCharger250w]:
         switches.append(
             SolixSwitchEntity(
                 device,
@@ -102,7 +103,7 @@ async def async_setup_entry(
         )
 
     # Support for controlling USB Port C2
-    if type(device) in [PrimeCharger160w]:
+    if type(device) in [PrimeCharger160w, PrimeCharger250w]:
         switches.append(
             SolixSwitchEntity(
                 device,
@@ -115,7 +116,7 @@ async def async_setup_entry(
         )
 
     # Support for controlling USB Port C3
-    if type(device) in [PrimeCharger160w]:
+    if type(device) in [PrimeCharger160w, PrimeCharger250w]:
         switches.append(
             SolixSwitchEntity(
                 device,
@@ -124,6 +125,32 @@ async def async_setup_entry(
                 "usb_port_c3",
                 "turn_usb_c3_on",
                 "turn_usb_c3_off",
+            ),
+        )
+
+    # Support for controlling USB Port C4
+    if type(device) in [PrimeCharger250w]:
+        switches.append(
+            SolixSwitchEntity(
+                device,
+                "USB Port C4",
+                "usb_port_c4",
+                "usb_port_c4",
+                "turn_usb_c4_on",
+                "turn_usb_c4_off",
+            ),
+        )
+
+    # Support for controlling combined USB Port A1 and A2 w/o status
+    if type(device) in [PrimeCharger250w]:
+        switches.append(
+            SolixSwitchEntity(
+                device,
+                "USB Port A1/A2",
+                "usb_port_a1_a2",
+                None,
+                "turn_usb_a1_a2_on",
+                "turn_usb_a1_a2_off",
             ),
         )
 
