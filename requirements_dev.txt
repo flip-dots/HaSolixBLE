@@ -6,4 +6,4 @@ pytest-cov
 aiousbwatcher
 ruff
 mypy
-SolixBLE==3.8.0
+SolixBLE==3.9.0
