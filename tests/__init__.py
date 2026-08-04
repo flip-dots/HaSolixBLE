@@ -182,6 +182,13 @@ MOCK_PRIME_POWER_BANK_20K_DETAILS = MockDeviceDetails(
     model_class=Models.PRIME_POWER_BANK_20K,
 )
 
+MOCK_MAGGO_3IN1_DETAILS = MockDeviceDetails(
+    name="Anker MagGo 3 in 1 Charger",
+    addr="AA:BB:CC:DD:00:06",
+    model_string="MagGo 3-in-1 Wireless Charger (A25x7)",
+    model_class=Models.MAGGO_3IN1,
+)
+
 MOCK_SOLAR_BANK_2_DETAILS = MockDeviceDetails(
     name="Solar Bank 2",
     addr="AA:BB:CC:DD:00:02",
@@ -377,6 +384,16 @@ MOCK_PRIME_POWER_BANK_20K_TEST_DATA = {
     "usb_port_c1": ("status_usb_c1", PortStatus.NOT_CONNECTED),
     "usb_port_c2": ("status_usb_c2", PortStatus.INPUT),
     "usb_port_a1": ("status_usb_a1", PortStatus.OUTPUT),
+}
+
+# Sometimes the method name we are patching and the
+# entity ID do not line up, so a tuple is used to
+# manually specify it
+MOCK_MAGGO_3IN1_TEST_DATA = {
+    "pad_1_power": 5.0,
+    "pad_2_power": 0.0,
+    "pad_3_power": 7.5,
+    "power_out": ("total_power_out", 12.5),
 }
 
 
