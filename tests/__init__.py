@@ -308,12 +308,14 @@ MOCK_C1000_TEST_DATA = {
     "usb_c2_power": 6,
     "usb_a1_power": 7,
     "usb_a2_power": 8,
+    "dc_power_out": 19,
     "solar_power_in": 10,
     "power_in": ("total_power_in", 11),
     "power_out": ("total_power_out", 12),
     # TODO: Solar port is broken in underlying library
     # "solar_port": ("status_solar", PortStatus.INPUT),
     "ac_output": ("status_ac_out", PortStatus.NOT_CONNECTED),
+    "dc_output": ("status_dc_out", PortStatus.NOT_CONNECTED),
     "battery_percentage": 13,
 }
 
