@@ -17,6 +17,7 @@ from SolixBLE import (
     C1000,
     C1000G2,
     F2000,
+    F2600,
     F3800,
     Generic,
     MagGo3in1,
@@ -49,6 +50,8 @@ def get_power_station_class(model: Models) -> SolixBLEDevice:
         return C1000G2
     elif model is Models.F2000:
         return F2000
+    elif model is Models.F2600:
+        return F2600
     elif model is Models.F3800:
         return F3800
     elif model is Models.PRIME_CHARGER_160:
