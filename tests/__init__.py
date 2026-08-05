@@ -154,6 +154,13 @@ MOCK_F2000_DETAILS = MockDeviceDetails(
     model_class=Models.F2000,
 )
 
+MOCK_F2600_DETAILS = MockDeviceDetails(
+    name="Anker SOLIX F2600",
+    addr="AA:BB:CC:DD:00:12",
+    model_string="F2600",
+    model_class=Models.F2600,
+)
+
 MOCK_F3800_DETAILS = MockDeviceDetails(
     name="Anker SOLIX F3800",
     addr="AA:BB:CC:DD:EE:03",
@@ -317,6 +324,34 @@ MOCK_C1000_TEST_DATA = {
     "ac_output": ("status_ac_out", PortStatus.NOT_CONNECTED),
     "dc_output": ("status_dc_out", PortStatus.NOT_CONNECTED),
     "battery_percentage": 13,
+}
+
+# Sometimes the method name we are patching and the
+# entity ID do not line up, so a tuple is used to
+# manually specify it
+MOCK_F2000_TEST_DATA = {
+    "hours_remaining": ("remaining_hours", 1),
+    "days_remaining": ("remaining_days", 2),
+    "time_remaining": ("remaining_time", 3),
+    "timestamp_remaining": datetime.now(UTC),
+    "battery_percentage": 4,
+    "battery_health": 5,
+    "temperature": 6,
+    "ac_power_in": 7,
+    "ac_power_out": 8,
+    "solar_power_in": 9,
+    "usb_c1_power": 10,
+    "usb_c2_power": 11,
+    "usb_c3_power": 12,
+    "usb_a1_power": 13,
+    "usb_a2_power": 14,
+    "software_version": ("firmware_version", "0.0.15"),
+    "serial_number": "0.0.0.0.16",
+    "temperature_expansion": ("expansion_battery_temperature", 17),
+    "battery_percentage_expansion": ("expansion_battery_percentage", 18),
+    "battery_health_expansion": ("expansion_battery_health", 19),
+    "software_version_expansion": ("expansion_battery_firmware_version", "20.20.20"),
+    "num_expansion": ("number_of_expansion_batteries", 21),
 }
 
 # Sometimes the method name we are patching and the

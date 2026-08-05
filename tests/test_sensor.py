@@ -25,6 +25,7 @@ from . import (
     MOCK_C1000_TEST_DATA,
     MOCK_C1000G2_DETAILS,
     MOCK_F2000_DETAILS,
+    MOCK_F2000_TEST_DATA,
     MOCK_F3800_DETAILS,
     MOCK_MAGGO_3IN1_DETAILS,
     MOCK_MAGGO_3IN1_TEST_DATA,
@@ -76,7 +77,7 @@ from . import (
             MOCK_F2000_DETAILS,
             MOCK_F2000_DETAILS,
             "F2000",
-            {},
+            MOCK_F2000_TEST_DATA,
             id="f2000",
         ),
         pytest.param(
