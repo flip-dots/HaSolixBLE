@@ -33,10 +33,12 @@ This lists the supported devices, more information on what features are supporte
 - C1000(X)
 - C1000(X) Gen 2
 - F2000
+- F2600
 - F3800
 - Anker Prime 160w Charger
 - Anker Prime 250w Charger
 - Anker Prime 20k (220w) Power Bank
+- Anker Prime MagGo 3-in-1
 - Solarbank 2
 - Potentially more!
 
