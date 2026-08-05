@@ -118,7 +118,7 @@ from . import (
             MOCK_C1000_DETAILS,
             "C1000",
             "dc_output",
-            None,
+            "dc_output",
             "turn_dc_on",
             "turn_dc_off",
             (PortStatus.NOT_CONNECTED, PortStatus.OUTPUT, PortStatus.NOT_CONNECTED),
