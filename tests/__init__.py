@@ -6,7 +6,7 @@ from typing import Any
 
 from bleak.backends.scanner import AdvertisementData, BLEDevice
 from habluetooth import BluetoothServiceInfoBleak
-from SolixBLE import LightStatus, PortStatus
+from SolixBLE import ChargingStatus, LightStatus, PortStatus
 from SolixBLE.devices.solarbank2 import (
     GridStatus,
     LightMode,
@@ -352,6 +352,51 @@ MOCK_F2000_TEST_DATA = {
     "battery_health_expansion": ("expansion_battery_health", 19),
     "software_version_expansion": ("expansion_battery_firmware_version", "20.20.20"),
     "num_expansion": ("number_of_expansion_batteries", 21),
+}
+
+# Sometimes the method name we are patching and the
+# entity ID do not line up, so a tuple is used to
+# manually specify it
+MOCK_F2600_TEST_DATA = {
+    "charging_status": ("charging_status", ChargingStatus.IDLE, "Idle"),
+    "hours_remaining": ("remaining_hours", 1),
+    "days_remaining": ("remaining_days", 2),
+    "time_remaining": ("remaining_time", 3),
+    "timestamp_remaining": datetime.now(UTC),
+    "battery_percentage": 4,
+    "battery_health": 5,
+    "temperature": 6,
+    "power_in": ("total_power_in", 7.7),
+    "power_out": ("total_power_out", 8.8),
+    "ac_power_in": 9,
+    "ac_power_out": 10,
+    "ac_output": ("status_ac_out", PortStatus.NOT_CONNECTED),
+    "ac_timer": datetime.now(UTC),
+    "solar_power_in": 11,
+    "dc_1_power_out": ("dc_power_out_1", 12),
+    "dc_2_power_out": ("dc_power_out_2", 13),
+    "solar_port": ("status_solar", PortStatus.INPUT),
+    "dc_timer": datetime.now(UTC),
+    "usb_c1_power": 14,
+    "usb_c2_power": 15,
+    "usb_c3_power": 16,
+    "usb_a1_power": 17,
+    "usb_a2_power": 18,
+    "usb_port_c1": ("status_usb_c1", PortStatus.NOT_CONNECTED),
+    "usb_port_c2": ("status_usb_c2", PortStatus.OUTPUT),
+    "usb_port_c3": ("status_usb_c3", PortStatus.OUTPUT),
+    "usb_port_a1": ("status_usb_a1", PortStatus.INPUT),
+    "usb_port_a2": ("status_usb_a2", PortStatus.INPUT),
+    "light": ("status_light", LightStatus.LOW),
+    "display_mode": ("display_status", LightStatus.OFF),
+    "software_version": ("firmware_version", "19.19.19"),
+    "serial_number": "20.20.20.20",
+    "temperature_expansion": ("expansion_battery_temperature", 21),
+    "battery_percentage_expansion": ("expansion_battery_percentage", 22),
+    "battery_health_expansion": ("expansion_battery_health", 23),
+    "software_version_expansion": ("expansion_battery_firmware_version", "24.24.24"),
+    "num_expansion": ("number_of_expansion_batteries", 25),
+    "ac_power_out_sockets": 26,
 }
 
 # Sometimes the method name we are patching and the

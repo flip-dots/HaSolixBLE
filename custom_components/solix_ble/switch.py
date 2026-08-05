@@ -14,6 +14,7 @@ from SolixBLE import (
     C800,
     C1000,
     C1000G2,
+    F2600,
     PortStatus,
     PrimeCharger160w,
     PrimeCharger250w,
@@ -38,7 +39,7 @@ async def async_setup_entry(
     switches: list[SolixSwitchEntity] = []
 
     # Support for AC output switch with status
-    if type(device) in [C300, C800, C1000, C1000G2]:
+    if type(device) in [C300, C800, C1000, C1000G2, F2600]:
         switches.append(
             SolixSwitchEntity(
                 device,
@@ -51,7 +52,7 @@ async def async_setup_entry(
         )
 
     # Support for DC output switch with status
-    if type(device) in [C300, C1000, C1000G2]:
+    if type(device) in [C300, C1000, C1000G2, F2600]:
         switches.append(
             SolixSwitchEntity(
                 device,
@@ -77,7 +78,7 @@ async def async_setup_entry(
         )
 
     # Support for display on/off switch without status
-    if type(device) in [C300, C800, C1000]:
+    if type(device) in [C300, C800, C1000, F2600]:
         switches.append(
             SolixSwitchEntity(
                 device,
