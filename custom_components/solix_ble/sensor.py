@@ -19,6 +19,7 @@ from SolixBLE import (
     C1000,
     C1000G2,
     F2000,
+    F2000Old,
     F2600,
     F3800,
     MagGo3in1,
@@ -260,6 +261,7 @@ async def async_setup_entry(
         C800,
         C1000,
         C1000G2,
+        F2000Old,
         F2600,
         F3800,
         Solarbank2,
@@ -818,7 +820,7 @@ async def async_setup_entry(
         )
 
     # Light status
-    if type(device) in [C300, C300DC, F2600]:
+    if type(device) in [C300, C300DC, F2000Old, F2600]:
         sensors.append(
             SolixSensorEntity(
                 device,
