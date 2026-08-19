@@ -14,6 +14,7 @@ from SolixBLE import (
     C800,
     C1000,
     C1000G2,
+    F2000Old,
     F2600,
     PortStatus,
     PrimeCharger160w,
