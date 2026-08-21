@@ -33,6 +33,7 @@ This lists the supported devices, more information on what features are supporte
 - C1000(X)
 - C1000(X) Gen 2
 - F2000
+- F2000 (767) (older firmware)
 - F2600
 - F3800
 - Anker Prime 160w Charger
