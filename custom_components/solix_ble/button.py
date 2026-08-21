@@ -81,11 +81,9 @@ class SolixButtonEntity(ButtonEntity):
 
     def _state_change_callback(self) -> None:
         """Run when device informs of state update."""
-        _LOGGER.debug("Received state notification from device %s", self.name)
         self._update_updatable_attributes()
         self.async_write_ha_state()
 
     async def async_press(self) -> None:
         """Handle the button press."""
-        _LOGGER.warning("button pressed: %s", self.name)
         await self._action()

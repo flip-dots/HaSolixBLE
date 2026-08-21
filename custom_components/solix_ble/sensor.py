@@ -75,7 +75,7 @@ async def async_setup_entry(
         )
 
     # Charging status sensor
-    if type(device) in [F2600, F3800]:
+    if type(device) in [F2000Old, F2600, F3800]:
         sensors.append(
             SolixSensorEntity(
                 device,
@@ -429,7 +429,7 @@ async def async_setup_entry(
         )
 
     # DC Timer
-    if type(device) in [C300, C300DC, F2000Old, F2600]:
+    if type(device) in [C300, C300DC, F2600]:
         sensors.append(
             SolixSensorEntity(
                 device,
@@ -856,7 +856,7 @@ async def async_setup_entry(
         )
 
     # Display status
-    if type(device) in [C300DC, F2000Old, F2600]:
+    if type(device) in [C300DC, F2600]:
         sensors.append(
             SolixSensorEntity(
                 device,

@@ -40,7 +40,7 @@ async def async_setup_entry(
     switches: list[SolixSwitchEntity] = []
 
     # Support for AC output switch with status
-    if type(device) in [C300, C800, C1000, C1000G2, F2600]:
+    if type(device) in [C300, C800, C1000, C1000G2, F2000Old, F2600]:
         switches.append(
             SolixSwitchEntity(
                 device,
@@ -53,7 +53,7 @@ async def async_setup_entry(
         )
 
     # Support for DC output switch with status
-    if type(device) in [C300, C1000, C1000G2, F2600]:
+    if type(device) in [C300, C1000, C1000G2, F2000Old, F2600]:
         switches.append(
             SolixSwitchEntity(
                 device,
@@ -153,6 +153,19 @@ async def async_setup_entry(
                 None,
                 "turn_usb_a1_a2_on",
                 "turn_usb_a1_a2_off",
+            ),
+        )
+
+    # Support for power saving mode switch with status
+    if type(device) in [F2000Old]:
+        switches.append(
+            SolixSwitchEntity(
+                device,
+                "Power Saving Mode",
+                "power_saving_mode",
+                "power_saving_mode_enabled",
+                "turn_power_saving_mode_on",
+                "turn_power_saving_mode_off",
             ),
         )
 

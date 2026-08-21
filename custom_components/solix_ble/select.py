@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Awaitable, Callable
 from typing import TYPE_CHECKING
 
 from homeassistant.components.select import SelectEntity
@@ -17,10 +18,8 @@ _LOGGER = logging.getLogger(__name__)
 if TYPE_CHECKING:
     from . import SolixBLEConfigEntry
 
-#: Ordered to match LightStatus's declaration order (UNKNOWN excluded - not
-#: a settable option, matches F2000Old.set_light_mode() rejecting it).
-LIGHT_MODE_OPTIONS = ["Off", "Low", "Medium", "High", "SOS"]
-_LIGHT_MODE_BY_OPTION = {
+
+LIGHT_MODE_BY_OPTION = {
     "Off": LightStatus.OFF,
     "Low": LightStatus.LOW,
     "Medium": LightStatus.MEDIUM,
@@ -28,9 +27,25 @@ _LIGHT_MODE_BY_OPTION = {
     "SOS": LightStatus.SOS,
 }
 
-_LIGHT_MODE_BY_STATUS = {
-    status: option for option, status in _LIGHT_MODE_BY_OPTION.items()
+SCREEN_BRIGHTNESS_BY_OPTION = {
+    "Off": LightStatus.OFF,
+    "Low": LightStatus.LOW,
+    "Medium": LightStatus.MEDIUM,
+    "High": LightStatus.HIGH,
 }
+
+RECHARD_POWER_BY_OPTION = {
+    "200W": 200,
+    "300W": 300,
+    "400W": 400,
+    "500W": 500,
+    "600W": 600,
+    "750W": 750,
+    "1440W": 1440,
+    "Silent": 749,
+    "High Speed": 1439,
+}
+
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -40,32 +55,87 @@ async def async_setup_entry(
     """Set up the selects."""
 
     device = config_entry.runtime_data
-    selects: list[SolixLightModeSelectEntity] = []
+    selects: list[SolixSelectEntity] = []
 
     if type(device) in [F2000Old]:
-        selects.append(SolixLightModeSelectEntity(device))
+        selects.append(
+            SolixSelectEntity(
+                device=device,
+                name="Light Mode",
+                unique_id_suffix="light_mode",
+                attribute="light",
+                options=LIGHT_MODE_BY_OPTION,
+                action=device.set_light_mode,
+            )
+        )
+
+    if type(device) in [F2000Old]:
+        selects.append(
+            SolixSelectEntity(
+                device=device,
+                name="Screen Brightness",
+                unique_id_suffix="screen_brightness",
+                attribute="screen_brightness",
+                options=SCREEN_BRIGHTNESS_BY_OPTION,
+                action=device.set_screen_brightness,
+            )
+        )
+
+    if type(device) in [F2000Old]:
+        selects.append(
+            SolixSelectEntity(
+                device=device,
+                name="AC Power Input Limit",
+                unique_id_suffix="ac_power_input_limit",
+                attribute="ac_power_in_limit",
+                options=RECHARD_POWER_BY_OPTION,
+                action=device.set_ac_power_in_limit,
+            )
+        )
 
     async_add_entities(selects)
 
 
-class SolixLightModeSelectEntity(SelectEntity):
-    """Light bar mode control, backed by set_light_mode()/light."""
+class SolixSelectEntity(SelectEntity):
+    """Representation of a LightStatus-backed select."""
 
     _attr_has_entity_name = True
-    _attr_name = "Light Mode"
-    _attr_options = LIGHT_MODE_OPTIONS
 
-    def __init__(self, device: SolixBLEDevice) -> None:
+    def __init__(
+        self,
+        device: SolixBLEDevice,
+        name: str,
+        unique_id_suffix: str,
+        attribute: str,
+        options: dict[str, LightStatus],
+        action: Callable[[LightStatus], Awaitable[None]],
+    ) -> None:
         """Initialize the select. Does not connect.
 
         :param device: The device API object.
+        :param name: Home Assistant entity name.
+        :param unique_id_suffix: Unique ID suffix for this entity.
+        :param attribute: Device attribute containing the current state.
+        :param options: Mapping of Home Assistant option strings to LightStatus.
+        :param action: Async device method used to set the value.
         """
         self._device = device
-        self._attr_unique_id = f"{device.address}_light_mode"
+        self._attribute_name = attribute
+        self._option_by_status = {
+            status: option for option, status in options.items()
+        }
+        self._status_by_option = options
+        self._action = action
+
+        self._attr_name = name
+        self._attr_unique_id = f"{device.address}_{unique_id_suffix}"
+        self._attr_options = list(options)
+
         self._attr_device_info = DeviceInfo(
             name=device.name,
             connections={(CONNECTION_BLUETOOTH, device.address)},
         )
+
         self._update_updatable_attributes()
 
     async def async_added_to_hass(self) -> None:
@@ -77,9 +147,11 @@ class SolixLightModeSelectEntity(SelectEntity):
         self._device.remove_callback(self._state_change_callback)
 
     def _update_updatable_attributes(self) -> None:
-        """Update this entities updatable attrs from the devices state."""
+        """Update this entity's updatable attrs from the device state."""
         self._attr_available = self._device.available
-        self._attr_current_option = _LIGHT_MODE_BY_STATUS.get(self._device.light)
+
+        status = getattr(self._device, self._attribute_name)
+        self._attr_current_option = self._option_by_status.get(status)
 
     def _state_change_callback(self) -> None:
         """Run when device informs of state update. Updates local properties."""
@@ -89,4 +161,4 @@ class SolixLightModeSelectEntity(SelectEntity):
 
     async def async_select_option(self, option: str) -> None:
         """Change the selected option."""
-        await self._device.set_light_mode(_LIGHT_MODE_BY_OPTION[option])
+        await self._action(self._status_by_option[option])

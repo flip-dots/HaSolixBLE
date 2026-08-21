@@ -119,7 +119,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: SolixBLEConfigEntry) -> 
     entry.runtime_data = device
 
     await hass.config_entries.async_forward_entry_setups(
-        entry, [Platform.SENSOR, Platform.SWITCH, Platform.SELECT, Platform.BUTTON]
+        entry, [Platform.SENSOR, Platform.SWITCH, Platform.SELECT, Platform.BUTTON, Platform.NUMBER]
     )
 
     return True
