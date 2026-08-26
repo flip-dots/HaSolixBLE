@@ -1216,6 +1216,8 @@ class SolixSensorEntity(SensorEntity):
         self._attr_device_info = DeviceInfo(
             name=device.name,
             connections={(CONNECTION_BLUETOOTH, device.address)},
+            manufacturer="Anker",
+            model=type(device).__name__,
         )
         self._update_updatable_attributes()
 
