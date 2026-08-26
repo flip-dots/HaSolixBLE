@@ -110,6 +110,12 @@ async def async_setup_entry(
             )
         ),
 
+    # Remaining time (S2000 reports a single tenths-of-hour estimate)
+    if type(device) in [AS220]:
+        sensors.append(
+            SolixSensorEntity(device, "Remaining Time", "hours", "time_remaining"),
+        )
+
     # Battery percentage sensor
     if type(device) in [
         C300,
@@ -450,7 +456,6 @@ async def async_setup_entry(
         PrimeCharger160w,
         PrimeCharger250w,
         PrimePowerBank20k,
-        AS220,
     ]:
         sensors.append(
             SolixSensorEntity(
@@ -564,7 +569,6 @@ async def async_setup_entry(
         PrimeCharger160w,
         PrimeCharger250w,
         PrimePowerBank20k,
-        AS220,
     ]:
         sensors.append(
             SolixSensorEntity(
@@ -572,6 +576,29 @@ async def async_setup_entry(
                 "Status USB C1",
                 None,
                 "usb_port_c1",
+                SensorDeviceClass.ENUM,
+                PORT_STATUS_STRINGS,
+                None,
+            )
+        )
+
+    # USB total power + status (S2000 reports one aggregate figure for all USB ports)
+    if type(device) in [AS220]:
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "USB Power",
+                "W",
+                "usb_power",
+                SensorDeviceClass.POWER,
+            )
+        )
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "Status USB",
+                None,
+                "usb_output",
                 SensorDeviceClass.ENUM,
                 PORT_STATUS_STRINGS,
                 None,
