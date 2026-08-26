@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import uuid as _uuid
 from typing import Any
 
 import voluptuous as vol
@@ -16,7 +17,7 @@ from homeassistant.const import CONF_MAC, CONF_NAME
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import device_registry, selector
-from SolixBLE import Generic
+from SolixBLE import AS220, Generic
 
 from . import get_power_station_class
 from .const import DOMAIN, Models
@@ -66,6 +67,8 @@ class SolixBLEConfigFlow(ConfigFlow, domain=DOMAIN):
     def __init__(self) -> None:
         """Initialize the config flow."""
         self._discovery_info: bluetooth.BluetoothServiceInfoBleak | None = None
+        self._model: Models | None = None
+        self._client_uuid: str | None = None
 
     async def async_step_bluetooth(
         self, discovery_info: bluetooth.BluetoothServiceInfoBleak
@@ -102,6 +105,11 @@ class SolixBLEConfigFlow(ConfigFlow, domain=DOMAIN):
                 await self.async_set_unique_id(unique_id)
                 self._abort_if_unique_id_configured()
                 model = Models(user_input["device_model"])
+                self._model = model
+                if model is Models.AS220:
+                    # The S2000 needs a client UUID bound to the unit; hand off to
+                    # the bind step (generate a UUID + press-the-Power-button flow).
+                    return await self.async_step_bind()
                 await validate_input(self.hass, unique_id, model)
 
             except CannotConnect:
@@ -132,6 +140,62 @@ class SolixBLEConfigFlow(ConfigFlow, domain=DOMAIN):
                     )
                 }
             ),
+            errors=errors,
+            description_placeholders={
+                CONF_NAME: self._discovery_info.name,
+                CONF_MAC: self._discovery_info.address,
+            },
+        )
+
+
+    async def async_step_bind(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Bind a generated client UUID to an S2000 (AS220).
+
+        The S2000 only streams telemetry to a UUID that has been registered with
+        the unit. We generate one and ask the user to press the Power button once
+        to confirm the (local, account-free) binding.
+        """
+        assert self._discovery_info is not None
+        errors: dict[str, str] = {}
+
+        # Generate the UUID once and reuse it across retries.
+        if self._client_uuid is None:
+            self._client_uuid = str(_uuid.uuid4())
+
+        if user_input is not None:
+            address = self._discovery_info.address
+            ble_device = async_ble_device_from_address(
+                self.hass, address.upper(), connectable=True
+            )
+            if ble_device is None:
+                errors["base"] = "not_found"
+            else:
+                device = AS220(ble_device, client_uuid=self._client_uuid)
+                try:
+                    bound = await device.bind()
+                except Exception:  # noqa: BLE001
+                    _LOGGER.exception("Unexpected exception during S2000 bind")
+                    errors["base"] = "unknown"
+                    bound = False
+                finally:
+                    await device.disconnect()
+
+                if bound:
+                    return self.async_create_entry(
+                        title=self._discovery_info.name,
+                        data={
+                            "model": Models.AS220.value,
+                            "client_uuid": self._client_uuid,
+                        },
+                    )
+                if not errors:
+                    errors["base"] = "bind_failed"
+
+        return self.async_show_form(
+            step_id="bind",
+            data_schema=vol.Schema({}),
             errors=errors,
             description_placeholders={
                 CONF_NAME: self._discovery_info.name,

@@ -147,6 +147,13 @@ MOCK_C1000G2_DETAILS = MockDeviceDetails(
     model_class=Models.C1000G2,
 )
 
+MOCK_S2000_DETAILS = MockDeviceDetails(
+    name="Anker SOLIX S2000",
+    addr="AA:BB:CC:DD:EE:20",
+    model_string="S2000 (AS220)",
+    model_class=Models.AS220,
+)
+
 MOCK_F2000_DETAILS = MockDeviceDetails(
     name="Anker SOLIX F2000",
     addr="AA:BB:CC:DD:EE:03",

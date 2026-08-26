@@ -11,6 +11,7 @@ from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 from SolixBLE import (
+    AS220,
     C300,
     C300DC,
     C800,
@@ -64,6 +65,8 @@ def get_power_station_class(model: Models) -> SolixBLEDevice:
         return MagGo3in1
     elif model is Models.SOLARBANK_2:
         return Solarbank2
+    elif model is Models.AS220:
+        return AS220
     elif model is Models.UNKNOWN:
         return Generic
     else:
@@ -97,7 +100,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: SolixBLEConfigEntry) -> 
             f"updates will be printed in the log and this can be used to aid in adding support for new devices."
         )
 
-    device = DeviceClass(ble_device)
+    if model is Models.AS220:
+        device = DeviceClass(ble_device, client_uuid=entry.data.get("client_uuid"))
+    else:
+        device = DeviceClass(ble_device)
     try:
         await device.connect()
     except Exception as e:
