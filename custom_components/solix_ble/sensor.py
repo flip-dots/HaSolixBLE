@@ -157,7 +157,7 @@ async def async_setup_entry(
         )
 
     # Battery health sensor
-    if type(device) in [C300DC, C800, C1000, C1000G2, F2000, F2600]:
+    if type(device) in [C300DC, C800, C1000, C1000G2, F2000, F2600, AS220]:
         sensors.append(
             SolixSensorEntity(
                 device,
@@ -295,13 +295,27 @@ async def async_setup_entry(
         )
 
     # AC output on/off sensor
-    if type(device) in [C300, C800, C1000, C1000G2, F2600, F3800]:
+    if type(device) in [C300, C800, C1000, C1000G2, F2600, F3800, AS220]:
         sensors.append(
             SolixSensorEntity(
                 device,
                 "Status AC Out",
                 None,
                 "ac_output",
+                SensorDeviceClass.ENUM,
+                PORT_STATUS_STRINGS,
+                None,
+            )
+        )
+
+    # AC input on/off sensor (wall charger connected)
+    if type(device) in [AS220]:
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "Status AC In",
+                None,
+                "ac_input",
                 SensorDeviceClass.ENUM,
                 PORT_STATUS_STRINGS,
                 None,
@@ -436,6 +450,7 @@ async def async_setup_entry(
         PrimeCharger160w,
         PrimeCharger250w,
         PrimePowerBank20k,
+        AS220,
     ]:
         sensors.append(
             SolixSensorEntity(
@@ -549,6 +564,7 @@ async def async_setup_entry(
         PrimeCharger160w,
         PrimeCharger250w,
         PrimePowerBank20k,
+        AS220,
     ]:
         sensors.append(
             SolixSensorEntity(
