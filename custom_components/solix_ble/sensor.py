@@ -88,6 +88,20 @@ async def async_setup_entry(
             )
         )
 
+    # Charging status sensor (S2000 battery power-flow: idle/discharging/charging)
+    if type(device) in [AS220]:
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "Charging Status",
+                None,
+                "charging_status",
+                SensorDeviceClass.ENUM,
+                CHARGING_STATUS_C300_STRINGS,
+                None,
+            )
+        )
+
     # Time remaining sensor
     if type(device) in [C300, C300DC, C800, C1000, F2000, F2600, F3800]:
         sensors.append(
