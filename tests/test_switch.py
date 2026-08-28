@@ -24,6 +24,7 @@ from custom_components.solix_ble.const import DOMAIN
 
 from . import (
     MOCK_C300_DETAILS,
+    MOCK_C300DC_DETAILS,
     MOCK_C800_DETAILS,
     MOCK_C1000_DETAILS,
     MOCK_C1000G2_DETAILS,
@@ -58,6 +59,17 @@ from . import (
             "turn_dc_off",
             (PortStatus.NOT_CONNECTED, PortStatus.OUTPUT, PortStatus.NOT_CONNECTED),
             id="c300_dc",
+        ),
+        pytest.param(
+            MOCK_C300DC_DETAILS,
+            MOCK_C300DC_DETAILS,
+            "C300DC",
+            "dc_output",
+            "dc_output",
+            "turn_dc_on",
+            "turn_dc_off",
+            (PortStatus.NOT_CONNECTED, PortStatus.OUTPUT, PortStatus.NOT_CONNECTED),
+            id="c300dc_dc",
         ),
         pytest.param(
             MOCK_C300_DETAILS,

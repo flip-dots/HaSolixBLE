@@ -11,6 +11,7 @@ from homeassistant.helpers.device_registry import CONNECTION_BLUETOOTH, DeviceIn
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from SolixBLE import (
     C300,
+    C300DC,
     C800,
     C1000,
     C1000G2,
@@ -52,7 +53,7 @@ async def async_setup_entry(
         )
 
     # Support for DC output switch with status
-    if type(device) in [C300, C1000, C1000G2, F2600]:
+    if type(device) in [C300, C300DC, C1000, C1000G2, F2600]:
         switches.append(
             SolixSwitchEntity(
                 device,
