@@ -27,9 +27,6 @@ def mock_bluetooth_dependency(hass):
         hass.config.components.add("bluetooth_adapters")
 
 
-@pytest.fixture(autouse=True)
-def mock_bluetooth(enable_bluetooth: None):
-    """Auto mock bluetooth."""
 
 
 @pytest.fixture(autouse=True)
