@@ -13,6 +13,7 @@ from homeassistant.helpers.device_registry import CONNECTION_BLUETOOTH, DeviceIn
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.util.dt import as_local
 from SolixBLE import (
+    AS220,
     C300,
     C300DC,
     C800,
@@ -87,6 +88,20 @@ async def async_setup_entry(
             )
         )
 
+    # Charging status sensor (S2000 battery power-flow: idle/discharging/charging)
+    if type(device) in [AS220]:
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "Charging Status",
+                None,
+                "charging_status",
+                SensorDeviceClass.ENUM,
+                CHARGING_STATUS_C300_STRINGS,
+                None,
+            )
+        )
+
     # Time remaining sensor
     if type(device) in [C300, C300DC, C800, C1000, F2000, F2600, F3800]:
         sensors.append(
@@ -109,6 +124,12 @@ async def async_setup_entry(
             )
         ),
 
+    # Remaining time (S2000 reports a single tenths-of-hour estimate)
+    if type(device) in [AS220]:
+        sensors.append(
+            SolixSensorEntity(device, "Remaining Time", "hours", "time_remaining"),
+        )
+
     # Battery percentage sensor
     if type(device) in [
         C300,
@@ -120,8 +141,7 @@ async def async_setup_entry(
         F2600,
         F3800,
         Solarbank2,
-        PrimePowerBank20k,
-    ]:
+        PrimePowerBank20k, AS220]:
         sensors.append(
             SolixSensorEntity(
                 device,
@@ -157,7 +177,7 @@ async def async_setup_entry(
         )
 
     # Battery health sensor
-    if type(device) in [C300DC, C800, C1000, C1000G2, F2000, F2600]:
+    if type(device) in [C300DC, C800, C1000, C1000G2, F2000, F2600, AS220]:
         sensors.append(
             SolixSensorEntity(
                 device,
@@ -233,8 +253,7 @@ async def async_setup_entry(
         F2600,
         F3800,
         Solarbank2,
-        PrimePowerBank20k,
-    ]:
+        PrimePowerBank20k, AS220]:
         sensors.append(
             SolixSensorEntity(
                 device,
@@ -264,8 +283,7 @@ async def async_setup_entry(
         F3800,
         Solarbank2,
         PrimePowerBank20k,
-        MagGo3in1,
-    ]:
+        MagGo3in1, AS220]:
         sensors.append(
             SolixSensorEntity(
                 device, "Total Power Out", "W", "power_out", SensorDeviceClass.POWER
@@ -273,7 +291,7 @@ async def async_setup_entry(
         )
 
     # AC power in sensor
-    if type(device) in [C300, C800, C1000, C1000G2, F2000, F2600, F3800]:
+    if type(device) in [C300, C800, C1000, C1000G2, F2000, F2600, F3800, AS220]:
         sensors.append(
             SolixSensorEntity(
                 device,
@@ -285,7 +303,7 @@ async def async_setup_entry(
         )
 
     # AC power out sensor
-    if type(device) in [C300, C800, C1000, C1000G2, F2000, F2600, F3800, Solarbank2]:
+    if type(device) in [C300, C800, C1000, C1000G2, F2000, F2600, F3800, Solarbank2, AS220]:
         sensors.append(
             SolixSensorEntity(
                 device,
@@ -297,13 +315,27 @@ async def async_setup_entry(
         )
 
     # AC output on/off sensor
-    if type(device) in [C300, C800, C1000, C1000G2, F2600, F3800]:
+    if type(device) in [C300, C800, C1000, C1000G2, F2600, F3800, AS220]:
         sensors.append(
             SolixSensorEntity(
                 device,
                 "Status AC Out",
                 None,
                 "ac_output",
+                SensorDeviceClass.ENUM,
+                PORT_STATUS_STRINGS,
+                None,
+            )
+        )
+
+    # AC input on/off sensor (wall charger connected)
+    if type(device) in [AS220]:
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "Status AC In",
+                None,
+                "ac_input",
                 SensorDeviceClass.ENUM,
                 PORT_STATUS_STRINGS,
                 None,
@@ -324,7 +356,7 @@ async def async_setup_entry(
         )
 
     # Solar power in
-    if type(device) in [C300, C300DC, C800, C1000, C1000G2, F2000, F2600, F3800, Solarbank2]:
+    if type(device) in [C300, C300DC, C800, C1000, C1000G2, F2000, F2600, F3800, Solarbank2, AS220]:
         sensors.append(
             SolixSensorEntity(
                 device,
@@ -558,6 +590,29 @@ async def async_setup_entry(
                 "Status USB C1",
                 None,
                 "usb_port_c1",
+                SensorDeviceClass.ENUM,
+                PORT_STATUS_STRINGS,
+                None,
+            )
+        )
+
+    # USB total power + status (S2000 reports one aggregate figure for all USB ports)
+    if type(device) in [AS220]:
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "USB Power",
+                "W",
+                "usb_power",
+                SensorDeviceClass.POWER,
+            )
+        )
+        sensors.append(
+            SolixSensorEntity(
+                device,
+                "Status USB",
+                None,
+                "usb_output",
                 SensorDeviceClass.ENUM,
                 PORT_STATUS_STRINGS,
                 None,
@@ -870,7 +925,7 @@ async def async_setup_entry(
         )
 
     # Serial number
-    if type(device) in [C300, C300DC, C800, C1000, C1000G2, F2000, F2600, F3800, Solarbank2]:
+    if type(device) in [C300, C300DC, C800, C1000, C1000G2, F2000, F2600, F3800, Solarbank2, AS220]:
         sensors.append(
             SolixSensorEntity(
                 device,

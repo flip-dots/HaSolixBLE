@@ -1,20 +1,25 @@
 {
-    "config": {
-      "step": {
-        "confirm": {
-          "description": "Select the correct model for {name} ({mac}). Make sure the connection light is blinking!"
-        }
+  "config": {
+    "step": {
+      "confirm": {
+        "description": "Select the correct model for {name} ({mac}). Make sure the connection light is blinking!"
       },
-      "error": {
-        "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
-        "cannot_negotiate": "Failed to negotiate encryption, is the device too far?.",
-        "no_scanners": "No Bluetooth scanners are available to search for the device.",
-        "not_found": "The device was not found.",
-        "unknown": "[%key:common::config_flow::error::unknown%]"
-      },
-      "abort": {
-        "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
-        "not_implemented": "This integration can only be setup via Bluetooth discovery. No devices have been found."
+      "bind": {
+        "title": "Bind Home Assistant to your S2000",
+        "description": "The S2000 ({name}) needs a one-time local pairing (no Anker account). Press the Power button once on the unit, then submit to register Home Assistant. Note: the S2000 is single-owner, so this replaces the phone app's pairing."
       }
+    },
+    "error": {
+      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
+      "cannot_negotiate": "Failed to negotiate encryption, is the device too far?.",
+      "no_scanners": "No Bluetooth scanners are available to search for the device.",
+      "not_found": "The device was not found.",
+      "unknown": "[%key:common::config_flow::error::unknown%]",
+      "bind_failed": "Binding was not confirmed. Press the Power button on the S2000 once during the pairing window, then try again."
+    },
+    "abort": {
+      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
+      "not_implemented": "This integration can only be setup via Bluetooth discovery. No devices have been found."
     }
+  }
 }

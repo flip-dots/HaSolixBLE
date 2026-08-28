@@ -23,6 +23,7 @@ from . import (
     MOCK_F2000_DETAILS,
     MOCK_F2600_DETAILS,
     MOCK_F3800_DETAILS,
+    MOCK_S2000_DETAILS,
     MOCK_MAGGO_3IN1_DETAILS,
     MOCK_PRIME_160_DETAILS,
     MOCK_PRIME_250_DETAILS,
@@ -347,3 +348,88 @@ async def test_bluetooth_form_multiple_set_up(
         CONF_NAME: mock_device_details.name,
         CONF_MAC: mock_device_details.addr,
     }
+
+
+async def test_bluetooth_form_as220_bind(
+    hass: HomeAssistant,
+    mock_setup_entry: AsyncMock,
+) -> None:
+    """Selecting the S2000 routes to the bind step and stores a generated UUID."""
+    details = MOCK_S2000_DETAILS
+
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={"source": config_entries.SOURCE_BLUETOOTH},
+        data=details.get_service_info(),
+    )
+    assert result["type"] is FlowResultType.FORM
+    assert result["step_id"] == "confirm"
+
+    # Selecting AS220 hands off to the bind step (not create_entry).
+    with patch(
+        "custom_components.solix_ble.config_flow.async_ble_device_from_address",
+        return_value=details.get_ble_device(),
+    ):
+        result = await hass.config_entries.flow.async_configure(
+            flow_id=result["flow_id"],
+            user_input={"device_model": details.model_string},
+        )
+    assert result["type"] is FlowResultType.FORM
+    assert result["step_id"] == "bind"
+
+    # A confirmed bind creates the entry with a generated client_uuid.
+    with (
+        patch(
+            "custom_components.solix_ble.config_flow.async_ble_device_from_address",
+            return_value=details.get_ble_device(),
+        ),
+        patch("SolixBLE.AS220.bind", side_effect=[True]),
+        patch("SolixBLE.AS220.disconnect", side_effect=[None]),
+    ):
+        result = await hass.config_entries.flow.async_configure(
+            flow_id=result["flow_id"], user_input={}
+        )
+
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert result["result"].data["model"] == details.model_string
+    assert len(result["result"].data["client_uuid"]) == 36
+    assert len(mock_setup_entry.mock_calls) == 1
+
+
+async def test_bluetooth_form_as220_bind_failed(
+    hass: HomeAssistant,
+    mock_setup_entry: AsyncMock,
+) -> None:
+    """An unconfirmed bind (no button press) re-shows the bind form with an error."""
+    details = MOCK_S2000_DETAILS
+
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={"source": config_entries.SOURCE_BLUETOOTH},
+        data=details.get_service_info(),
+    )
+    with patch(
+        "custom_components.solix_ble.config_flow.async_ble_device_from_address",
+        return_value=details.get_ble_device(),
+    ):
+        result = await hass.config_entries.flow.async_configure(
+            flow_id=result["flow_id"],
+            user_input={"device_model": details.model_string},
+        )
+    assert result["step_id"] == "bind"
+
+    with (
+        patch(
+            "custom_components.solix_ble.config_flow.async_ble_device_from_address",
+            return_value=details.get_ble_device(),
+        ),
+        patch("SolixBLE.AS220.bind", side_effect=[False]),
+        patch("SolixBLE.AS220.disconnect", side_effect=[None]),
+    ):
+        result = await hass.config_entries.flow.async_configure(
+            flow_id=result["flow_id"], user_input={}
+        )
+
+    assert result["type"] is FlowResultType.FORM
+    assert result["step_id"] == "bind"
+    assert result["errors"] == {"base": "bind_failed"}
