@@ -265,7 +265,7 @@ async def async_setup_entry(
         )
 
     # Total power in sensor
-    if type(device) in [C300, C300DC, C800, C1000, F2600, F3800]:
+    if type(device) in [C300, C300DC, C800, C1000, F2600]:
         sensors.append(
             SolixSensorEntity(
                 device, "Total Power In", "W", "power_in", SensorDeviceClass.POWER

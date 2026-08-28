@@ -7,23 +7,14 @@
       "service_uuid": "0000ff09-0000-1000-8000-00805f9b34fb"
     }
   ],
-  "codeowners": [
-    "@flip-dots"
-  ],
+  "codeowners": ["@flip-dots"],
   "config_flow": true,
-  "dependencies": [
-    "bluetooth_adapters"
-  ],
+  "dependencies": ["bluetooth_adapters"],
   "documentation": "https://github.com/flip-dots/HaSolixBLE",
   "integration_type": "device",
   "iot_class": "local_push",
   "issue_tracker": "https://github.com/flip-dots/HaSolixBLE/issues",
-  "requirements": [
-    "SolixBLE>=3.10.0"
-  ],
-  "loggers": [
-    "bleak",
-    "SolixBLE"
-  ],
-  "version": "3.6.0"
+  "requirements": ["SolixBLE==4.0.0b1"],
+  "loggers": ["bleak", "SolixBLE"],
+  "version": "3.7.0"
 }
