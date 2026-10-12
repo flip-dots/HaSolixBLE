@@ -47,6 +47,7 @@ _LOGGER = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from . import SolixBLEConfigEntry
+    from .throttle import SolixThrottle
 
 
 async def async_setup_entry(
@@ -56,7 +57,7 @@ async def async_setup_entry(
 ) -> None:
     """Set up the Sensors."""
 
-    device = config_entry.runtime_data
+    device = config_entry.runtime_data.device
     sensors: list[SolixSensorEntity] = []
 
     # Charging status sensor
@@ -1182,6 +1183,11 @@ async def async_setup_entry(
             )
         )
 
+    throttle = config_entry.runtime_data.throttle
+
+    for sensor in sensors:
+        sensor.set_throttle(throttle)
+
     async_add_entities(sensors)
 
 
@@ -1204,6 +1210,7 @@ class SolixSensorEntity(SensorEntity):
         """Initialize the device object. Does not connect."""
 
         self._attribute_name = attribute
+        self._throttle: SolixThrottle | None = None
 
         self._device = device
         self._address = device.address
@@ -1219,13 +1226,19 @@ class SolixSensorEntity(SensorEntity):
         )
         self._update_updatable_attributes()
 
+    def set_throttle(self, throttle: SolixThrottle) -> None:
+        """Set the throttle this entity subscribes to for updates."""
+        self._throttle = throttle
+
     async def async_added_to_hass(self) -> None:
         """Run when this Entity has been added to HA."""
-        self._device.add_callback(self._state_change_callback)
+        assert self._throttle is not None
+        self._throttle.add_callback(self._state_change_callback)
 
     async def async_will_remove_from_hass(self) -> None:
         """Run when entity will be removed from HA."""
-        self._device.remove_callback(self._state_change_callback)
+        assert self._throttle is not None
+        self._throttle.remove_callback(self._state_change_callback)
 
     def _update_updatable_attributes(self) -> None:
         """Update this entities updatable attrs from the devices state."""

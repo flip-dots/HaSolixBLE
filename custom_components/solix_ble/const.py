@@ -5,6 +5,15 @@ from enum import Enum
 DOMAIN = "solix_ble"
 
 
+##################
+# Update options #
+##################
+
+# Minimum seconds between sensor updates. Zero disables throttling.
+CONF_UPDATE_INTERVAL = "update_interval"
+DEFAULT_UPDATE_INTERVAL = 0
+
+
 ###############
 # Port status #
 ###############

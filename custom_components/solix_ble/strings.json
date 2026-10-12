@@ -16,5 +16,18 @@
         "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
         "not_implemented": "This integration can only be setup via Bluetooth discovery. No devices have been found."
       }
+    },
+    "options": {
+      "step": {
+            "init": {
+                  "title": "Update settings",
+                  "data": {
+                        "update_interval": "Minimum update interval"
+                  },
+                  "data_description": {
+                        "update_interval": "Sensors will update at most once every this many seconds. Set to 0 to update as fast as the device reports. Switches are never delayed."
+                  }
+            }
+      }
     }
 }

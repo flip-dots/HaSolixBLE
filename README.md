@@ -57,6 +57,15 @@ This lists the supported devices, more information on what features are supporte
 4. Click confirm, the device should be added, this may take a while as a connection is negotiated.
 5. Profit???
 
+## Update interval
+
+Devices report new readings roughly once a second, which is more than most setups need and produces a lot of database writes. To limit this, go to the integration, click Configure, and set a minimum update interval.
+
+- The default of `0` keeps every update, as before.
+- Switches are never delayed.
+- A device going offline is always reported immediately.
+
+
 ## Limitations
 
 - It is not possible to use Bluetooth and Wi-Fi at the same time.

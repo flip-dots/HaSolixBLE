@@ -37,7 +37,7 @@ async def async_setup_entry(
 ) -> None:
     """Set up the switches."""
 
-    device = config_entry.runtime_data
+    device = config_entry.runtime_data.device
     switches: list[SolixSwitchEntity] = []
 
     # Support for AC output switch with status

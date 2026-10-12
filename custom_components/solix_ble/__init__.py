@@ -1,6 +1,7 @@
 """SolixBLE integration."""
 
 import logging
+from dataclasses import dataclass
 
 from homeassistant.components.bluetooth import (
     async_ble_device_from_address,
@@ -28,11 +29,21 @@ from SolixBLE import (
     SolixBLEDevice,
 )
 
-from .const import Models
+from .const import CONF_UPDATE_INTERVAL, DEFAULT_UPDATE_INTERVAL, Models
+from .throttle import SolixThrottle
 
 _LOGGER = logging.getLogger(__name__)
 
-type SolixBLEConfigEntry = ConfigEntry[SolixBLEDevice]
+
+@dataclass
+class SolixBLERuntimeData:
+    """Runtime objects owned by a config entry."""
+
+    device: SolixBLEDevice
+    throttle: SolixThrottle
+
+
+type SolixBLEConfigEntry = ConfigEntry[SolixBLERuntimeData]
 
 
 def get_power_station_class(model: Models) -> SolixBLEDevice:
@@ -68,6 +79,17 @@ def get_power_station_class(model: Models) -> SolixBLEDevice:
         return Generic
     else:
         raise NotImplementedError(f"Unexpected model. Got: '{type(model)}'!")
+
+
+async def _async_options_updated(
+    hass: HomeAssistant,
+    entry: SolixBLEConfigEntry,
+) -> None:
+    """Apply changed options without reconnecting to the device."""
+
+    entry.runtime_data.throttle.set_interval(
+        entry.options.get(CONF_UPDATE_INTERVAL, DEFAULT_UPDATE_INTERVAL),
+    )
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: SolixBLEConfigEntry) -> bool:
@@ -113,7 +135,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: SolixBLEConfigEntry) -> 
             "Device connected but failed to negotiate encryption."
         )
 
-    entry.runtime_data = device
+    throttle = SolixThrottle(
+        hass,
+        device,
+        entry.options.get(CONF_UPDATE_INTERVAL, DEFAULT_UPDATE_INTERVAL),
+    )
+
+    entry.runtime_data = SolixBLERuntimeData(device=device, throttle=throttle)
+
+    entry.async_on_unload(entry.add_update_listener(_async_options_updated))
 
     await hass.config_entries.async_forward_entry_setups(
         entry, [Platform.SENSOR, Platform.SWITCH]
@@ -132,8 +162,8 @@ async def async_unload_entry(hass: HomeAssistant, entry: SolixBLEConfigEntry) ->
         entry, Platform.SWITCH
     )
 
-    await entry.runtime_data.disconnect()
+    entry.runtime_data.throttle.async_shutdown()
 
-    entry.runtime_data = None
+    await entry.runtime_data.device.disconnect()
 
     return unload_ok_sensor and unload_ok_switch

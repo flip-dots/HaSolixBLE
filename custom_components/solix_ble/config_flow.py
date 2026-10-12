@@ -11,15 +11,20 @@ from homeassistant.components.bluetooth.api import (
     async_ble_device_from_address,
     async_scanner_count,
 )
-from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
+from homeassistant.config_entries import (
+    ConfigEntry,
+    ConfigFlow,
+    ConfigFlowResult,
+    OptionsFlow,
+)
 from homeassistant.const import CONF_MAC, CONF_NAME
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import device_registry, selector
 from SolixBLE import Generic
 
 from . import get_power_station_class
-from .const import DOMAIN, Models
+from .const import CONF_UPDATE_INTERVAL, DEFAULT_UPDATE_INTERVAL, DOMAIN, Models
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -63,6 +68,12 @@ class SolixBLEConfigFlow(ConfigFlow, domain=DOMAIN):
 
     VERSION = 1
 
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry: ConfigEntry) -> SolixBLEOptionsFlow:
+        """Return the options flow handler."""
+        return SolixBLEOptionsFlow()
+
     def __init__(self) -> None:
         """Initialize the config flow."""
         self._discovery_info: bluetooth.BluetoothServiceInfoBleak | None = None
@@ -89,7 +100,8 @@ class SolixBLEConfigFlow(ConfigFlow, domain=DOMAIN):
         return await self.async_step_confirm()
 
     async def async_step_confirm(
-        self, user_input: dict[str, Any] | None = None
+        self,
+        user_input: dict[str, Any] | None = None,
     ) -> ConfigFlowResult:
         """Confirm a single device."""
 
@@ -137,6 +149,42 @@ class SolixBLEConfigFlow(ConfigFlow, domain=DOMAIN):
                 CONF_NAME: self._discovery_info.name,
                 CONF_MAC: self._discovery_info.address,
             },
+        )
+
+
+class SolixBLEOptionsFlow(OptionsFlow):
+    """Handle options for a configured device."""
+
+    async def async_step_init(
+        self,
+        user_input: dict[str, Any] | None = None,
+    ) -> ConfigFlowResult:
+        """Manage the options."""
+
+        if user_input is not None:
+            return self.async_create_entry(data=user_input)
+
+        return self.async_show_form(
+            step_id="init",
+            data_schema=vol.Schema(
+                {
+                    vol.Optional(
+                        CONF_UPDATE_INTERVAL,
+                        default=self.config_entry.options.get(
+                            CONF_UPDATE_INTERVAL,
+                            DEFAULT_UPDATE_INTERVAL,
+                        ),
+                    ): selector.NumberSelector(
+                        selector.NumberSelectorConfig(
+                            min=0,
+                            max=3600,
+                            step=1,
+                            unit_of_measurement="s",
+                            mode=selector.NumberSelectorMode.BOX,
+                        ),
+                    ),
+                }
+            ),
         )
 
 
