@@ -48,6 +48,13 @@ def get_power_station_class(model: Models) -> SolixBLEDevice:
         return C1000
     elif model is Models.C1000G2:
         return C1000G2
+    elif model is Models.C2000G2:
+        # The C2000 Gen 2 (A1783) is behaviourally identical to the C1000 Gen 2
+        # (same encryption, telemetry framing and AC/DC control codes), confirmed
+        # on real hardware. Reuse the C1000G2 class so the exact-type entity gates
+        # in sensor.py/switch.py apply unchanged. Switch to SolixBLE.C2000G2 and
+        # extend those lists if C2000-specific telemetry is added later.
+        return C1000G2
     elif model is Models.F2000:
         return F2000
     elif model is Models.F2600:
