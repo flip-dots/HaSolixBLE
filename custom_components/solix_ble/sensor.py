@@ -1247,6 +1247,15 @@ class SolixSensorEntity(SensorEntity):
                 list(type(attribute_value)).index(attribute_value)
             ]
 
+        # Battery health is a percentage. Some models/firmware report a
+        # different quantity in this byte (e.g. the A1783 C2000 Gen 2 reports
+        # 232 in the C1000 Gen 2 health byte), so suppress out-of-range values
+        # rather than surface a nonsensical ">100 %".
+        elif self._attribute_name == "battery_health" and not (
+            0 <= attribute_value <= 100
+        ):
+            self._attr_native_value = None
+
         # Else pass through value
         else:
             self._attr_native_value = attribute_value
