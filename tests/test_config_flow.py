@@ -10,7 +10,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 from homeassistant.helpers import device_registry
 
-from custom_components.solix_ble.const import DOMAIN
+from custom_components.solix_ble.const import CONF_UPDATE_INTERVAL, DOMAIN
 
 from . import (
     MOCK_C300_DETAILS,
@@ -347,3 +347,27 @@ async def test_bluetooth_form_multiple_set_up(
         CONF_NAME: mock_device_details.name,
         CONF_MAC: mock_device_details.addr,
     }
+
+
+async def test_options_flow_sets_update_interval(hass: HomeAssistant) -> None:
+    """The options flow writes the interval into the config entry options."""
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        title=MOCK_C300_DETAILS.name,
+        unique_id=MOCK_C300_DETAILS.addr.lower(),
+        data={"model": MOCK_C300_DETAILS.model_class},
+    )
+    entry.add_to_hass(hass)
+
+    result = await hass.config_entries.options.async_init(entry.entry_id)
+
+    assert result["type"] is FlowResultType.FORM
+    assert result["step_id"] == "init"
+
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"],
+        user_input={CONF_UPDATE_INTERVAL: 30},
+    )
+
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert entry.options[CONF_UPDATE_INTERVAL] == 30
