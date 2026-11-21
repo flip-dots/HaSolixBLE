@@ -8,6 +8,14 @@
       },
       {
         "connectable": true,
+        "service_uuid": "00001780-0000-1000-8000-00805f9b34fb"
+      },
+      {
+        "connectable": true,
+        "service_uuid": "00002215-0000-1000-8000-00805f9b34fb"
+      },
+      {
+        "connectable": true,
         "manufacturer_id": 65535,
         "manufacturer_data_start": [1, 244, 157, 138]
       }
