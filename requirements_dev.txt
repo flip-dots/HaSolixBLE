@@ -6,4 +6,5 @@ pytest-cov
 aiousbwatcher
 ruff
 mypy
+probatio
 SolixBLE==4.0.0b3

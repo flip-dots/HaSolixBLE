@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
+import asyncio
+import probatio
+from collections.abc import Callable
+from typing import Any, override
 
 import voluptuous as vol
 from homeassistant.components import bluetooth
@@ -13,10 +16,11 @@ from homeassistant.components.bluetooth.api import (
 )
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
 from homeassistant.const import CONF_MAC, CONF_NAME
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import device_registry, selector
 from SolixBLE import Generic
+from SolixBLE.const import UUID_IDENTIFIERS
 
 from . import get_power_station_class
 from .const import DOMAIN, Models
@@ -65,7 +69,77 @@ class SolixBLEConfigFlow(ConfigFlow, domain=DOMAIN):
 
     def __init__(self) -> None:
         """Initialize the config flow."""
+        self._discovered_devices: dict[str, bluetooth.BluetoothServiceInfoBleak] = {}
         self._discovery_info: bluetooth.BluetoothServiceInfoBleak | None = None
+        self._cancel_manual_discovery_task: Callable[[], None] | None = None
+
+    @override
+    def async_remove(self) -> None:
+        """Clean up resources when the config flow exits."""
+        if self._cancel_manual_discovery_task is not None:
+            self._cancel_manual_discovery_task()
+
+    @override
+    async def async_step_user(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Handle the user step to pick discovered device if discovery not used."""
+        errors: dict[str, str] = {}
+
+        # If user has selected device
+        if user_input is not None:
+            unique_id = device_registry.format_mac(user_input[CONF_MAC])
+            # Don't raise on progress because there may be discovery flows
+            await self.async_set_unique_id(unique_id, raise_on_progress=False)
+            # Guard against the user selecting a device which has been configured by
+            # another flow.
+            self._abort_if_unique_id_configured()
+            self._discovery_info = self._discovered_devices[user_input[CONF_MAC]]
+            return await self.async_step_confirm()
+
+        # If we are scanning get rid of the old one
+        if self._cancel_manual_discovery_task is not None:
+            self._cancel_manual_discovery_task()
+
+        def scanner_callback(service_info, _):
+            if any(uuid in service_info.service_uuids for uuid in UUID_IDENTIFIERS):
+                self._discovered_devices[service_info.address] = service_info
+
+        # Start active scanning
+        self._cancel_manual_discovery_task = bluetooth.async_register_callback(
+            self.hass,
+            scanner_callback,
+            {"connectable": True},
+            bluetooth.BluetoothScanningMode.ACTIVE,
+        )
+        await asyncio.sleep(10)
+
+        # Stop scanning
+        if self._cancel_manual_discovery_task is not None:
+            self._cancel_manual_discovery_task()
+            self._cancel_manual_discovery_task = None
+
+        # Check results
+        if not self._discovered_devices:
+            return self.async_abort(reason="no_devices_found")
+
+        data_schema = probatio.Schema(
+            {
+                probatio.Required(CONF_MAC): probatio.In(
+                    {
+                        service_info.address: (
+                            f"{service_info.name} ({service_info.address})"
+                        )
+                        for service_info in self._discovered_devices.values()
+                    }
+                ),
+            }
+        )
+        return self.async_show_form(
+            step_id="user",
+            data_schema=data_schema,
+            errors=errors,
+        )
 
     async def async_step_bluetooth(
         self, discovery_info: bluetooth.BluetoothServiceInfoBleak

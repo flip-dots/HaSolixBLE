@@ -3,6 +3,15 @@
       "step": {
         "confirm": {
           "description": "Select the correct model for {name} ({mac}). Make sure the connection light is blinking!"
+        },
+        "user": {
+          "data": {
+            "mac": "[%key:common::config_flow::data::device%]"
+          },
+          "data_description": {
+            "mac": "Select the SolixBLE device you want to set up"
+          },
+          "description": "[%key:component::bluetooth::config::step::user::description%]"
         }
       },
       "error": {
@@ -14,6 +23,7 @@
       },
       "abort": {
         "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
+        "no_devices_found": "[%key:common::config_flow::abort::no_devices_found%]",
         "not_implemented": "This integration can only be setup via Bluetooth discovery. No devices have been found."
       }
     }
